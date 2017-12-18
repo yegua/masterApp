@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>快件跟踪</title>
+	<link rel="stylesheet" type="text/css" href="../css/mui.css"/>
+	<link rel="stylesheet" type="text/css" href="../css/main.css"/>
+	<link rel="stylesheet" type="text/css" href="../css/kuaijiangz.css"/>
+</head>
+<body ng-controller="kjgzCtrl">	
+   <div class="mui-content">
+		<form class="ui-kuaijiangz-form">
+	    	<div class="ui-input-row">
+				<input type="text" placeholder="请输入运单号" name="code" ng-model="queryCode" value="" ng-keyup="isNullOfCode();" id="queryCode" />
+				<a href="#" class="ui-icon-scan" onclick="scanFn()" style="margin-top: 0"></a>
+			</div>
+			<div class="ui-select-row">
+				<label>快递公司</label>
+				<input type="text" ng-disabled="true" placeholder="请选择快递公司" ng-model="selectedCode" value="" data-code="{{selectedId}}" hm-tap="pageToSelectExpress();" id="queryData" />
+				<a href="#" class="ui-icon-rightArrow" hm-tap="pageToSelectExpress();"></a>
+			</div>
+		</form>
+		<div class="ui-button-row">
+			<button type="button" class="ui-button" hm-tap="queryCodeFn();" style="background-color: {{diabledColor}};"><span class="ui-icon-search"></span>查询</button>
+		</div>
+		<div class="ui-history">
+			<div class="ui-history-tip" ng-hide="historyToggle">无查件历史信息，点击搜索框快速查件</div>
+			<div class="ui-history-content" ng-show="historyToggle">
+				<div class="ui-history-nav">
+					<label>历史记录</label>
+					<a href="#" class="ui-history-clear" hm-tap="clearHistoryListFn();">清除历史</a>
+				</div>
+				<div style="clear: both;"></div>
+				<ul class="mui-table-view" ng-cloak>
+					<li class="mui-table-view-cell" ng-repeat="curData in historyListData">
+						<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-red" hm-tap="deleteHistoryRecordFn(curData);">删除</a>
+						</div>
+						<div class="mui-slider-handle" hm-tap="historyQueryFn(curData);">
+							运单号：<span ng-bind="curData.billcode"></span>&nbsp;<span ng-bind="curData.type"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+  	<div class="ui-popover ui-bar-popover">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell" ng-repeat="res in listData">
+				<div data-code="{{res.id}}" ng-bind="res.data" hm-tap="selectedList(res.id,res.data)">
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+  	<script src="../commonjs/jquery.min.js"></script>
+	<script src="../commonjs/angular.min.js"></script>
+	<script type="text/javascript" src="../commonjs/gestures-hammer.min.js"></script>
+	<script type="text/javascript" src="../commonjs/mui.min.js"></script>
+	<script type="text/javascript" src="../commonjs/sys.js"></script>
+	<script type="text/javascript" src="js/kuaijiangz.js"></script>	
+</body>
+</html>

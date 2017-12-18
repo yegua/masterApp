@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app="DecisionApp">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title>选择快递公司</title>
+	   	<link rel="stylesheet" href="../css/mui.min.css" />
+	    <link rel="stylesheet" href="../css/main.css" />
+	    <style>
+	    	.ui-list-row {
+	    		height: 42px;
+	    		line-height: 42px;
+	    		padding: 0px 10px;
+	    		border-bottom:solid 1px gainsboro;
+	    	}
+		</style>
+	</head>
+	<body ng-controller="SelectExpressController">
+	    <div class="mui-content">
+			<ul ng-cloak>
+				<li class="ui-list-row" ng-repeat="curData in listData" ng-bind="curData.data" hm-tap="selectedExpress( curData )">
+				</li>
+			</ul>
+	    </div>
+	 </body>
+	<script src="../commonjs/jquery.min.js"></script>
+	<script src="../commonjs/angular.min.js"></script>
+	<script type="text/javascript" src="../commonjs/gestures-hammer.min.js"></script>
+	<script type="text/javascript" src="../commonjs/mui.min.js"></script>
+	<script type="text/javascript" src="../commonjs/sys.js"></script>
+	<script type="text/javascript" src="js/selectExpress.js"></script> 	 
+</html>

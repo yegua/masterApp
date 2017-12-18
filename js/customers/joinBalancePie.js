@@ -1,0 +1,273 @@
+var app = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '加盟账单',		
+		startDate: '',
+		endDate: sys.todayDate(),
+		titleDate: '',
+		totalTickets: 0,
+		totalBalance: 0,
+		totalYue: 0,
+		tableShow: false,
+		balanceData: [],		
+		selectData:[],
+		website: [],
+		_balanceData: [],
+		typeName: ''
+		
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');	
+		this.titleDate = this.startDate + '-' + this.endDate;
+		this.requestSelectData();
+		this.requestData();		
+	},
+	methods: {		
+		closeDate: function(){
+			var self = this;
+			$('.mask-layer').fadeOut();
+			$('.picker-box').fadeOut(200);			
+			this.startDate = this.$refs.dateinfo.startDate;
+        	this.endDate = this.$refs.dateinfo.endDate;
+        	if(self.endDate === self.startDate){
+				self.titleDate = self.startDate;
+			}else{
+				self.titleDate = self.startDate + '-' + self.endDate;
+			};
+			if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+				sys.toast( '日期有误，请重新输入' );
+				return;
+			};
+			$('.select-box').css({
+				zIndex: 999
+			});	
+			console.log(this.titleDate)
+			this.requestData();
+		},
+		payShow: function(){
+			$('.test-pay').show();
+			$('.mask-layer').show();
+			$('.test-pay').find('img').click(function(){
+				$('.test-pay').hide();
+				$('.mask-layer').hide();
+			})
+		},
+		showTable: function(){
+			this.tableShow = !this.tableShow;
+			$('.table-responsive').slideToggle();
+			if(this.tableShow == true){
+				$('.more-data').addClass('up');
+			}else{
+				$('.more-data').removeClass('up');
+			}
+		},
+		//选择下拉框出现
+		showList: function(){
+			$('.mask-layer').fadeIn();
+			$('.select-contents').fadeIn(200);
+			$('.triangle_border_up').fadeIn(200);
+			$('#container-wrapper').addClass('disScroll');
+			$('.mask-layer').click(function(){
+				$(this).fadeOut();
+				$('.select-contents').fadeOut(200);
+				$('.triangle_border_up').fadeOut(200);
+				$('#container-wrapper').removeClass('disScroll');
+			})
+		},
+		//输入框搜索关键字查询选择下拉框
+		searchData: function(e){
+			var self = this;
+			var u = window.navigator.userAgent;
+			function searchInput(){
+				var temp=[],curData=[];
+				var dataList = self.selectData;
+				if(self.typeName === ''){
+					self.selectData = self.website;
+				}else{
+					for(var i=0;i<dataList.length;i++){
+						if(dataList[i].indexOf(self.typeName) != -1){
+							curData.push(dataList[i])
+						}
+					};
+					if(curData.length != 0){
+						self.selectData = curData;
+					}else{
+						sys.toast('查无此记录')
+					}
+				};
+			};
+			if(u.indexOf('AppleWebKit' && u.indexOf('Safari') > -1) > -1){
+				if(e.which === 13){
+					searchInput();
+				}
+			}else{
+				searchInput();
+			};
+			$('.icon-search').click(searchInput);
+		},
+		//选择对应网点或客户名称
+		chooseType: function(event){
+			$('.mask-layer').fadeOut();
+			$('.select-contents').fadeOut(200);
+			$('.triangle_border_up').fadeOut(200);
+			$('#container-wrapper').removeClass('disScroll');
+			if(event.currentTarget.innerHTML=="查全部"){
+				this.typeName = "";
+			}else{
+				this.typeName = event.currentTarget.innerHTML;
+			};
+			this.requestData();
+			event.currentTarget.className='selected';
+			$(event.currentTarget).siblings().removeClass('selected');
+		},
+		requestSelectData: function(){
+			var self = this;
+			sys.requestDataNew("zhonglianfenxi.siteNameQuery", {
+				startTime : self.startDate,
+				endTime : self.endDate,	
+				weightType: '0'
+			}, function( result ) {				
+				console.log(result);
+				var dataList = result.data;
+				//sys.loading('loadClose');
+				if(dataList.length == 0){												
+					sys.toast('基础资料暂无数据！');	
+				}else{
+					for(var i=0;i<dataList.length;i++){
+						self.website.push(dataList[i]['data_name']);
+					};
+					self.selectData = self.website;
+				};
+							
+			});
+		},
+		requestData: function(){
+			var self = this;
+			sys.requestDataNew('statistics.joinAcc', {
+				startTime : self.startDate,
+				endTime : self.endDate,
+				selectName : self.typeName,
+				dayMonth : self.dayMonth
+			}, function( result ) {
+				sys.loading('loadClose');
+				console.log(result);
+				if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+					sys.toast( '日期有误，请重新输入' );
+					return;
+				}					
+				if(result.data.length == 0){												
+					sys.toast('暂无数据！');						
+				};
+				self.balanceData = result.data;
+				self.readerChartbalance(result);
+				console.log(self.typeName);
+			});
+		},
+		readerChartbalance: function(result){			
+			var self = this;
+			var _showListArr = [],
+				_totalNum = 0,
+				_totalSum = 0,
+				_resultData = result.data,
+				_labelArr = ['transit','operFee','scanningFee','otherFee'],
+				_labelObj = {					
+					'transit':'中转费',
+					'operFee': '操作费',
+					'scanningFee':'扫描费',
+					'otherFee': '其他费'				
+				};
+			if(_resultData.length == 0){
+				_showListArr = [];
+			};
+			var _tempObj={},_curName='',_resArr=[];
+			for(var i = 0; i < _labelArr.length; i++){
+				_curName = _labelArr[i];
+				_tempObj = {
+					name: _labelObj[_curName],
+					value: 0
+				};
+				_showListArr.push(_tempObj);
+			};
+			
+			for ( var i = 0; i < _resultData.length; i++ ) {
+				_totalNum +=  _resultData[i].votes;				
+				_totalSum += _resultData[i].operFee;
+				_totalSum += _resultData[i].otherFee;				
+				_totalSum += _resultData[i].scanningFee;
+				_totalSum += _resultData[i].transit;
+				_showListArr[0].value+=_resultData[i].transit;
+				_showListArr[1].value+=_resultData[i].operFee;
+				_showListArr[2].value+=_resultData[i].scanningFee;
+				_showListArr[3].value+=_resultData[i].otherFee;
+				//self.website.push(_resultData[i].siteName);
+				//self.selectData.push(_resultData[i].siteName);				
+			};
+			console.log(_showListArr);
+			this.totalTickets = _totalNum;
+			this.totalBalance = _totalSum;
+			this._balanceData = _showListArr;				
+			//饼图
+			var _chartPie = echarts.init( document.getElementById('ui-chart-website') ),
+		        _pieoption = {
+		        	baseOption:{
+			        		noDataLoadingOption : {
+			        		text: '暂无数据',
+	                        effect: 'bubble',
+			        	},
+						tooltip : {
+					        trigger: 'item',
+					        formatter: "{b}<br/>{d}%"
+					    },
+					    color:['#3575bd', '#46c6ff','#38dab9','#f199f2',],  
+					    series : [
+					        {
+					            name:'货量分布',
+					            type:'pie',						           
+					          	radius : [30, '67%'],
+					          	center: ['50%', '53%'],
+					          	//startAngle: 90,
+					            label: {
+					            	normal: {
+					            		show: true,
+					            		position: 'outer',
+					            		formatter: '{c}元'+ '\n'+'{b}'
+					            	}
+					            },
+					            labelLine: {
+					            	normal:{
+					            		show: true,
+					            		length: 6,
+					            		length2: 35
+					            	}
+					            },
+					            data : _showListArr.reverse()
+					        }
+					    ],
+		        	},
+		        	media: [
+		        	    {
+		        	    	query:{        	    	
+			        	    	maxWidth: 359       	    	
+			        	    },
+			        	    option:{
+			        	    	series:[{
+			        	    		radius : [30, '56%'],
+			      	    	       	center: ['50%', '53%'],
+			        	    	}]       	    	            	    	
+			        	    }
+		        	    }
+		        	]
+		        	
+				};
+
+		    _chartPie.setOption( _pieoption );
+		},
+
+	},
+
+});
+$('#search-data').click(function(){
+	app.typeName = '';
+	app.selectData = app.website;
+});

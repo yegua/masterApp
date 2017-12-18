@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>站点大师</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">	
+		<link rel="stylesheet" type="text/css" href="css/queryCheck.css"/>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>
+			<div class="query-form">
+				<p class="flex flex-pack-between flex-align-center">
+					<span></span>											
+					<label>
+						<em style="display: block;">单号</em>
+						<input placeholder="请输入单号" v-model="queryNum" id="querynum-info"/>
+					</label>
+				</p>
+				<p>
+					<button class="btn-check">查快递</button>
+				</p>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/queryCheck.js"></script>
+	</body>
+</html>

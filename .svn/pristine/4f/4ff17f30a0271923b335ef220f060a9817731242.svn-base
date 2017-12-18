@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+	<title>网点运单使用</title>
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">
+	<link rel="stylesheet" type="text/css" href="fonts/iconfont.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>	
+	<style type="text/css">	
+		.table-responsive{
+			display: block;
+		}	
+		.table-responsive{
+			height: 100%;
+			border: none;
+			width: 100%;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+		.ui-chart-content .blue{
+			background: rgba(30,144,255,.4);		
+		}
+		.ui-chart-content{
+			width: 100%;
+			padding: 10px 0;
+			overflow-x: auto; 
+			overflow-y: hidden; 
+			position: relative;
+		}
+		.ui-chart .ui-chart-content .table-responsive{			
+			height: 100%;
+			overflow-y: auto; 
+			overflow-x: hidden;
+			z-index:1;
+			margin-bottom: 0;
+		}
+		.table-responsive .table tr th,.table-responsive .table tr td{
+			text-align: center;
+			font-size: 16px;
+			color: #161616;
+		}
+		.table-responsive .table tr:nth-child(odd){
+			background-color: #f2dede;
+		}
+		.table-responsive .table tr:nth-child(even){
+			background-color: #dff0d8;
+		}
+		.table-responsive .table .rowspan-center{
+			line-height: 55px;
+		}
+		
+		.ui-chart-content .tab-top th, .ui-chart-content .table-responsive .table td{
+			padding: 8px 5px;
+			text-align: center;
+		}
+		.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+			width: 70px;
+			font-size: 14px;
+		}
+		.ui-chart-content .tab-top th {
+			border: 1px solid #F5FFFA;
+		}
+		.ui-chart-content .table-responsive .table td div {
+			width: 71px;
+		}
+		.ui-chart-content .tab-top .colspan-center div{
+			width: 140px;			
+		}
+		
+		/*横屏*/
+		@media all and (orientation : landscape){			
+			.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+				width: 76px;				
+			}
+			.ui-chart-content .tab-top .colspan-center div{
+				width: 152px;			
+			}
+		}
+		
+		@media screen and (min-width: 768px) {
+			.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+				width: 100px;
+				font-size: 14px;
+			}
+			.ui-chart-content .tab-top .colspan-center div{
+				width: 200px;			
+			}
+		}
+	</style>
+</head>
+<body>	
+  	<div id="container-wrapper">					
+		<div class="date-choose flex flex-pack-between">
+            <div>
+                <span v-text="startDate"></span>-
+                <span v-text="endDate"></span>
+            </div>                
+            <div class="date-icon" id="date-show" @click="showDate()">日期</div> 
+            <div class="picker-box">
+            	<em></em>
+            	<p class="date-info">
+            		<input placeholder="开始时间" id="start" @click="startQueryFn()" v-model="startDate" readonly />           		
+            		至
+            		<input placeholder="结束时间" id="end"  @click="endQueryFn()" v-model="endDate" readonly />           		
+            	</p>
+            	<p class="date-confirm">
+            		<button class="btn-confirm" @click="closeDate()">确认</button>
+            	</p>		
+            </div>
+       	</div>         
+       	<div class="ui-chart-content" id="table-chart-content">
+			<table class="tab-top">
+				<tr class="blue">
+				<th rowspan="2"><div>姓名</div></th>
+				<th colspan="2" class="colspan-center"><div>运单</div></th>
+				<th colspan="2" class="colspan-center"><div>回单</div></th>
+				<th colspan="2" class="colspan-center"><div>子单</div></th></tr>
+				<tr class="blue"><th><div>已用</div></th>
+				<th><div>未用</div></th><th><div>已用</div></th>
+				<th><div>未用</div></th><th><div>已用</div></th><th><div>未用</div></th>
+				</tr>
+			</table>
+			<div class="table-responsive">
+			</div>
+			<table class="tab-top">
+				<tr class="blue">
+					<th><div>合计</div></th>
+					<th><div v-text="sum.wayUsed"></div></th>
+					<th><div v-text="sum.wayUnused"></div></th>
+					<th><div v-text="sum.backUsed"></div></th>
+					<th><div v-text="sum.backUnused"></div></th>
+					<th><div v-text="sum.subUsed"></div></th>
+					<th><div v-text="sum.subUnused"></div></th>
+					</tr>
+			</table>
+		</div>
+		<div class="mask-layer"></div>
+	</div>
+   	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+	<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+	<script type="text/javascript" src="js/customers/wangdianyd.js"></script> 		
+</body>
+</html>

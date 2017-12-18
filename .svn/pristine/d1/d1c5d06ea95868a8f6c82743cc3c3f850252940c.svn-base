@@ -1,0 +1,7 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '站点大师',
+		queryNum: ''
+	}
+})

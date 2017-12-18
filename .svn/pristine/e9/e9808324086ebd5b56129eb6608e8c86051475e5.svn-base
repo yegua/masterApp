@@ -1,0 +1,318 @@
+define(function(require,exports,module){
+	require('mui');
+	require('jquery');
+	require('sys');
+	require.async('angular',function(){
+		require.async('angular-gestures');
+		var app=angular.module('myApp',['angular-gestures']).config(function( hammerDefaultOptsProvider ){
+			hammerDefaultOptsProvider.set( { recognizers: [[Hammer.Tap, {time: 250}]] } );
+		}).directive('uiContent', function(){
+			return {
+				restrict : 'E',
+				template:'<div class="ui-chart">\
+					<div ng-bind="chartTitle" class="ui-chart-title">\
+					</div>\
+					<div class="ui-chart-content" id="table-chart-content">\
+						<table class="tab-top">\
+							<tr class="blue">\
+							<th rowspan="2"><div>姓名</div></th>\
+							<th colspan="2" class="colspan-center"><div>运单</div></th>\
+							<th colspan="2" class="colspan-center"><div>回单</div></th>\
+							<th colspan="2" class="colspan-center"><div>子单</div></th></tr>\
+							<tr class="blue"><th><div>已用</div></th>\
+							<th><div>未用</div></th><th><div>已用</div></th>\
+							<th><div>未用</div></th><th><div>已用</div></th><th><div>未用</div></th>\
+							</tr>\
+						</table>\
+					<div class="table-responsive">\
+					</div>\
+						<table class="tab-top">\
+							<tr class="blue">\
+								<th><div>合计</div></th>\
+								<th><div ng-bind="sum.wayUsed"></div></th>\
+								<th><div ng-bind="sum.wayUnused"></div></th>\
+								<th><div ng-bind="sum.backUsed"></div></th>\
+								<th><div ng-bind="sum.backUnused"></div></th>\
+								<th><div ng-bind="sum.subUsed"></div></th>\
+								<th><div ng-bind="sum.subUnused"></div></th>\
+								</tr>\
+						</table>\
+				</div>\
+			</div>',
+				replace : true
+			};
+		}).directive('uiPickerdate',function(){
+			return {
+				restrict : 'E',
+				template : '<footer class="ui-picker">\
+					<div class="ui-picker-mask" ng-hide="pickerToggle" hm-tap="slideDownBtnFn()">\
+					</div>\
+					<div class="ui-picker-datetime" ng-hide="pickerToggle">\
+						<div class="ui-picker-cancel" hm-tap="slideDownBtnFn()">\
+						</div>\
+						<div class="ui-picker-body">\
+					     	<div class="ui-picker-titlebar">\
+								<div class="ui-picker-title ui-picker-float">\
+								排名选择</div>\
+								<div class="ui-picker-title ui-picker-float">\
+									<input name="selectRanking" type="radio" ng-model="selectRanking" ng-checked="true" value="0" />\
+									<span>\
+									客户</span>\
+									<input name="selectRanking" type="radio" ng-model="selectRanking" value="1"/>\
+									<span>\
+									部门</span>\
+								</div>\
+								<div class="fn-clear">\
+								</div>\
+							</div>\
+							<ul class="ui-picker-content">\
+								<li>\
+									<input name="startTime" type="text" class="ui-picker-search" placeholder="起始时间" hm-tap="startTimeFn()" ng-model="startTimeValue" ng-readonly="true" />\
+								</li>\
+								<li>\
+									<input name="endTime" type="text" class="ui-picker-search" placeholder="结束时间"  hm-tap="endTimeFn()" ng-model="endTimeValue" ng-readonly="true" />\
+								</li>\
+							</ul>\
+						</div>\
+					</div>\
+					<div class="ui-picker-menus">\
+						<ul>\
+							<li class="ui-text-left">\
+								<label  hm-tap="beforeDateBtnFn()" >前查\
+								</label>\
+							</li>\
+							<li class="ui-text-center"  hm-tap="slideUpBtnFn()">\
+								<label style="visibility:hidden;" hm-tap="okbtn()">确定\
+								</label>\
+							</li>\
+							<li class="ui-text-right">\
+								<label  hm-tap="afterDateBtnFn()">后查\
+								</label>\
+							</li>\
+						</ul>\
+					</div>\
+				</footer>',
+				replace : true,
+				compile : function( element, attributes ) {
+					
+					require.async('muiPicker');
+					var _options = { 
+						'type' : 'date',
+						'beginYear' : 1900,
+						'endYear' : new Date().getFullYear() 
+					},
+					_picker = null;
+					return {
+						pre : function( scope, element, attributes ) {
+							scope.pickerToggle = true;
+						},
+						post : function( scope, element, attributes ) {
+							scope.slideUpBtnFn = function() {
+								datePickerToggle( !scope.pickerToggle );
+								
+								if( scope.pickerToggle ) {
+									( typeof scope.okDateFn == 'function' ) ? scope.okDateFn( ) : null;
+								}
+								
+							};
+							
+							scope.slideDownBtnFn = function() {
+								datePickerToggle( true );
+							};
+							
+							scope.beforeDateBtnFn = function() {
+								datePickerToggle( true );
+								( typeof scope.beforeDateFn == 'function' ) ? scope.beforeDateFn( ) : null;
+							};
+							
+							scope.afterDateBtnFn = function() {
+								datePickerToggle( true );
+								( typeof scope.afterDateFn == 'function' ) ? scope.afterDateFn( ) : null;
+							};
+							scope.startTimeFn = function() {
+								_options.value = scope.startTimeValue;								
+								_picker = new mui.DtPicker( _options );								
+								_picker.show( function( result ) {								
+									scope.$apply( function(){
+										scope.startTimeValue = result.text;
+									} );																		
+									_picker.dispose();
+								} );
+								
+							};
+							
+							scope.endTimeFn = function() {
+								_options.value = scope.endTimeValue;
+								
+								_picker = new mui.DtPicker( _options );
+								
+								_picker.show( function( result ) {
+									scope.$apply( function(){
+										scope.endTimeValue = result.text;
+									} );
+									
+									_picker.dispose();
+								} );
+							};
+							function datePickerToggle( toggle ) {
+								scope.pickerToggle = toggle;
+								element.find('label')[1].style.visibility = toggle ? 'hidden' : 'visible';
+							};
+												
+						}
+					};
+				}
+			};
+		}).directive( 'uiIndex', function(){
+			return {
+				restrict : 'E',
+				replace : true,
+				template : '<div class="ui-toolbar-index" ng-hide="indexToggle"></div>',
+				compile : function( element, attributes ) {
+					return {
+						post : function( scope, element, attributes ) {
+							element.addClass( 'slide-right' );
+							element.on('click',function(){							
+								change(element);								
+							});
+							
+							//如果低于4.4版本，不执行点击切换
+							/*if(Number(sys.versions().version)<4.4){
+								element.off('click');
+							}*/
+							
+						}
+					};
+				}
+			};
+		} ).controller('yewuyuanyjCtrl',function($scope,$timeout){
+			
+			$timeout(function(){ 
+				//initialization
+				$scope.selectRanking = '0';
+				$scope.endTimeValue = sys.todayDate( );
+				$scope.startTimeValue = sys.dateDiffDay( $scope.endTimeValue, 4, 'before' );
+				$scope.chartTitle = ($scope.startTimeValue + '—' + $scope.endTimeValue).replace(/-/g,'/');	
+				requestData( );
+			});
+			
+			//横竖屏切换时执行
+			var mql = window.matchMedia("(orientation:portrait)");
+			mql.addListener(function(){
+				//alert(11);
+				//setTimeout(function(){
+					$('.table-responsive').css({
+						width: $('.blue')[0].clientWidth+'px',
+						height: $('.ui-chart-content').height()-$('.blue').height()-65+'px'
+						});
+				//},300)
+			});
+				
+			$scope.okbtn=function(){
+				requestData();
+			};
+			$scope.beforeDateFn = function() {			
+				$scope.endTimeValue = sys.dateDiffDay( $scope.startTimeValue, 1, 'before' );
+				$scope.startTimeValue = sys.dateDiffDay( $scope.endTimeValue, 4, 'before' );
+				$scope.chartTitle = ($scope.startTimeValue + '—' + $scope.endTimeValue).replace(/-/g,'/');	
+				requestData( );
+			};
+		
+			$scope.afterDateFn = function() {
+				$scope.startTimeValue = sys.dateDiffDay( $scope.endTimeValue, 1, 'after' );
+				$scope.endTimeValue = sys.dateDiffDay( $scope.startTimeValue, 4, 'after' );	
+				$scope.chartTitle = ($scope.startTimeValue + '—' + $scope.endTimeValue).replace(/-/g,'/');	
+				requestData( );
+			};
+			
+			function requestData( ) {
+				if( !sys.compareWithDate( $scope.endTimeValue, $scope.startTimeValue ) ) {
+					sys.toast( '日期有误，请重新输入' );
+					return;
+				}
+//				$scope.chartTitle = ($scope.startTimeValue + '—' + $scope.endTimeValue).replace(/-/g,'/');
+//				sys.requestDataNew('billmake.list',{
+//					startTime : $scope.startTimeValue,
+//					endTime : $scope.endTimeValue				
+//				}, function( result ) {
+//					var dataList=result.data,
+//					tablehtml='<table class="table">',
+//					sum={
+//						wayUsed: 0,
+//						wayUnused: 0,
+//						backUsed: 0,
+//						backUnused: 0,
+//						subUsed: 0,
+//						subUnused: 0
+//					};
+//					console.log(result);
+//					$.each(dataList,function(index,item){
+//						tablehtml+='<tr>';
+//						tablehtml+='<td><div>'+item.sendName+'</div></td>';
+//						tablehtml+='<td><div>'+item.waybillUsed+'</div></td>';
+//						tablehtml+='<td><div>'+item.waybillUnused+'</div></td>';
+//						tablehtml+='<td><div>'+item.backBillUsed+'</div></td>';
+//						tablehtml+='<td><div>'+item.backBillUnused+'</div></td>';
+//						tablehtml+='<td><div>'+item.subBillUsed+'</div></td>';
+//						tablehtml+='<td><div>'+item.subBillUnused+'</div></td>';
+//						tablehtml+='</tr>';
+//						sum.backUsed+=parseInt(item.backBillUsed);
+//						sum.backUnused+=parseInt(item.backBillUnused);
+//						sum.subUsed+=parseInt(item.subBillUsed);
+//						sum.subUnused+=parseInt(item.subBillUnused);
+//						sum.wayUsed+=parseInt(item.waybillUsed);
+//						sum.wayUnused+=parseInt(item.waybillUnused);
+//					});	
+//					$scope.$apply(function(){
+//						$scope.sum = sum;
+//					});
+//					
+//					tablehtml+='</table>';
+//					$('.table-responsive').html(tablehtml);
+//					$('.table-responsive').css({width: $('.blue').width()+'px',height: $('.ui-chart-content').height()-$('.blue').height()-65+'px'});			
+//				});
+				var dataList=[
+				   {sendName: '敏思达',waybillUsed: 898.9,waybillUnused: 4546,backBillUsed: 456.7,backBillUnused: 546,subBillUsed: 99,subBillUnused:96.99},
+				   {sendName: '敏思达',waybillUsed: 898.9,waybillUnused: 4546,backBillUsed: 456.7,backBillUnused: 546,subBillUsed: 99,subBillUnused:96.99},
+				   {sendName: '敏思达',waybillUsed: 898.9,waybillUnused: 4546,backBillUsed: 456.7,backBillUnused: 546,subBillUsed: 99,subBillUnused:96.99},
+				   {sendName: '敏思达',waybillUsed: 898.9,waybillUnused: 4546,backBillUsed: 456.7,backBillUnused: 546,subBillUsed: 99,subBillUnused:96.99}],
+				tablehtml='<table class="table">',
+				sum={
+					wayUsed: 0,
+					wayUnused: 0,
+					backUsed: 0,
+					backUnused: 0,
+					subUsed: 0,
+					subUnused: 0
+				};
+				$.each(dataList,function(index,item){
+					tablehtml+='<tr>';
+					tablehtml+='<td><div>'+item.sendName+'</div></td>';
+					tablehtml+='<td><div>'+item.waybillUsed+'</div></td>';
+					tablehtml+='<td><div>'+item.waybillUnused+'</div></td>';
+					tablehtml+='<td><div>'+item.backBillUsed+'</div></td>';
+					tablehtml+='<td><div>'+item.backBillUnused+'</div></td>';
+					tablehtml+='<td><div>'+item.subBillUsed+'</div></td>';
+					tablehtml+='<td><div>'+item.subBillUnused+'</div></td>';
+					tablehtml+='</tr>';
+					sum.backUsed+=parseInt(item.backBillUsed);
+					sum.backUnused+=parseInt(item.backBillUnused);
+					sum.subUsed+=parseInt(item.subBillUsed);
+					sum.subUnused+=parseInt(item.subBillUnused);
+					sum.wayUsed+=parseInt(item.waybillUsed);
+					sum.wayUnused+=parseInt(item.waybillUnused);
+				});	
+				$scope.$apply(function(){
+					$scope.sum = sum;
+				});
+				
+				tablehtml+='</table>';
+				$('.table-responsive').html(tablehtml);
+				$('.table-responsive').css({width: $('.blue').width()+'px',height: $('.ui-chart-content').height()-$('.blue').height()-65+'px'});											
+			};
+		});
+	
+	})
+		
+})
+	  	

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>快递查询结果</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">
+		<link rel="stylesheet" type="text/css" href="fonts/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="css/queryCheck.css"/>
+		<style type="text/css">
+			[v-cloak] {
+			  display: none;
+			}
+			/*#container-wrapper{
+				padding-bottom: 30px;
+				height: 120%;
+				overflow-y: auto;
+			}*/
+		</style>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>
+			<div class="query-detail">
+				<h2 class="flex flex-pack-between">
+					<span>运单信息</span>					
+					<span>图片</span>
+				</h2>
+				<ul>
+					<li class="flex">
+						<span class="short">取件员</span>
+						<span class="short">客户</span>
+						<span class="short">重量</span>
+						<span class="short">运费</span>
+						<span class="long">目的地</span>
+					</li>
+					<li class="flex list-content">
+						<span class="short" v-text="pickerName"></span>
+						<span class="short" v-text="customerName"></span>
+						<span class="short" v-text="weight"></span>
+						<span class="short" v-text="queryCost"></span>
+						<span class="long" v-text="targetAddress"></span>
+					</li>
+				</ul>
+				<h2>
+					发件信息
+				</h2>
+				<ul>
+					<li class="flex">
+						<span class="ui-short">领取客户</span>
+						<span class="ui-short">领取业务员</span>
+						<span class="ui-long">领取网点</span>
+					</li>
+					<li class="flex list-content">
+						<span class="ui-short" v-text="pickCustomer"></span>
+						<span class="ui-short" v-text="pickClerk"></span>
+						<span class="ui-long" v-text="pickSite"></span>
+					</li>
+				</ul>
+				<p class="margin-space"></p>
+				<h2 class="flex flex-pack-between">
+					<span>快递详情</span>
+					<span style="color: #ff4000;" v-cloak>耗时{{queryDays}}天</span>
+				</h2>
+				<ul class="query-contents">
+					<li class="flex flex-align-center detail-new">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">浙江杭州北部公司-msdadmin-已收件</span>
+						<i class="icon iconfont">&#xe605;</i>
+					</li>
+					<li class="flex flex-align-center">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">山东菏泽公司-MSD-已收件</span>
+						<!--<span class="icon-order iconfont icon-jiantou1"></span>-->
+						<i class="icon iconfont old-icon">&#xe604;</i>
+					</li>
+					<li class="flex flex-align-center">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">已到达-福田莆田公司</span>
+						<i class="icon iconfont old-icon">&#xe604;</i>
+					</li>		
+					<li class="flex flex-align-center">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">上海浦东金桥公司-msd-已收件</span>
+						<i class="icon iconfont old-icon">&#xe604;</i>
+					</li>		
+					<li class="flex flex-align-center">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">河南禹州公司-MSD测试-已收件</span>
+						<i class="icon iconfont old-icon">&#xe604;</i>
+					</li>	
+					<li class="flex flex-align-center">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">河南禹州公司-MSD测试-已收件</span>
+						<i class="icon iconfont old-icon">&#xe604;</i>
+					</li>	
+					<li class="flex flex-align-center">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">河南禹州公司-MSD测试-已收件</span>
+						<i class="icon iconfont old-icon">&#xe604;</i>
+					</li>	
+					<li class="flex flex-align-center">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">河南禹州公司-MSD测试-已收件</span>
+						<i class="icon iconfont old-icon">&#xe604;</i>
+					</li>	
+					<li class="flex flex-align-center">
+						<span class="ui-detail-short"><em>2017.07.04</em><br/><em>17:39</em></span>
+						<span class="ui-detail-long">河南禹州公司-MSD测试-已收件</span>
+						<i class="icon iconfont old-icon">&#xe604;</i>
+					</li>	
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/queryDetail.js"></script>
+	</body>
+</html>

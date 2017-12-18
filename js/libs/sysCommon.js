@@ -1,0 +1,435 @@
+var sys = {
+	/*
+	 * @fn
+	 * 		log
+	 */
+	log : function( tag, params ) {
+		var _tag = '',
+			_params = null;
+			
+		if( arguments.length == 1 ) {
+			_tag = 'params';
+			_params = tag;
+		} else if( arguments.length == 2 ) {
+			_tag = tag;
+			_params = params;
+		}
+		
+		console.log(  _tag + ':' + ( ( typeof _params == 'object' || typeof _params == 'array' ) ? JSON.stringify( _params ) : _params ) );
+		
+	},	
+	/*
+	 * @fn
+	 * 		get params of URL
+	 */
+	getURL : function() {
+		var urlStr = window.location.search, //得到的是url中？后部分
+			urlArr = [],
+			urlObj = {},
+			paramsArr = [],
+			posQ = urlStr.indexOf( '?' );//返回问号出现位置的索引
+		
+		if ( posQ != -1 && posQ == 0 ) {
+			urlStr = urlStr.slice( posQ + 1, urlStr.length );//截取到问号后的字符串；
+		}
+		
+		urlArr = urlStr.split( '&' ); //有&的地方分割，变成数组
+		
+		if ( urlArr.length != 0 ) {
+			for( var i = 0; i < urlArr.length; i++ ){
+				paramsArr = urlArr[i].split( '=' );//有=的地方分割，变成新数组
+				urlObj[ paramsArr[0] ] = paramsArr[1];
+			}
+		} else {
+			paramsArr = urlStr.split( '=' );
+			urlObj[ paramsArr[0] ] = paramsArr[1];
+		}
+		
+		//console.log( 'urlObject:' + JSON.stringify(urlObj) );
+		
+		return urlObj;
+	},
+	/*
+	 * @fn
+	 * 		date component
+	 */
+	
+	//compare with date value
+	compareWithDate : function( firstDate, secondDate ) {
+		var _firstDateObj = ( typeof firstDate == 'string' ) ? new Date( firstDate ) : firstDate,
+			_secondDateObj = ( typeof secondDate == 'string' ) ? new Date( secondDate ) : secondDate;
+			
+		return _firstDateObj.getTime( ) >= _secondDateObj.getTime( );
+	},
+	
+	//return today
+	todayDate : function( ) {
+		var _todayDate = new Date( );
+		//先在月份和号前加00然后取倒数两位；
+		return _todayDate.getFullYear( ) + '/' + ( '00' + ( _todayDate.getMonth( ) + 1 ) ).slice(-2) + '/' + ( '00' + _todayDate.getDate( ) ).slice( -2 ); 
+	},
+	//计算当前月份
+	currentMonth : function(){
+		var _todayDate = new Date( );
+		//在月份前加00取倒数两位；
+		return _todayDate.getFullYear( ) + '/' + ( '00' + ( _todayDate.getMonth( ) + 1 ) ).slice(-2); 
+	},
+	
+	//计算此月的最后一天
+	endDayOfMonth : function( selectedMonth ) {
+		console.log( 'selectedMonth:' + selectedMonth);
+		var _todayDate = new Date( ),
+			_curDate = new Date( selectedMonth + '/01' ),
+			_curYear = _curDate.getFullYear( ),
+			_curMonth = _curDate.getMonth( ) + 1,
+			_endDay = new Date( _curYear, _curMonth, 0 );
+			
+		if( _todayDate.getFullYear( ) == _curYear &&  _todayDate.getMonth( ) + 1 == _curMonth ) {
+			return sys.todayDate( );
+		}
+		
+		return selectedMonth + '/' + _endDay.getDate( );
+	},
+	
+	//计算给定日期前后的n天的日期
+	dateDiffDay : function( currentDate , num, type ){
+	    var _s, _d, _time, _time2,
+	    	_dateObj = typeof currentDate == 'string' ? new Date( currentDate ) : currentDate,
+	    	_selectNum = num ? num : 4,
+	    	_curType = type ? type : 'before';
+	    	
+	    _time = _dateObj.getTime();
+	    _time2 = _selectNum * 1000 * 3600 * 24;
+	    
+	    if ( _curType == 'before' ) {
+	   		_time -= _time2; 	
+	    } else {
+	    	_time += _time2;
+	    }
+	   
+	    _d = new Date( _time );
+	    _s = _d.getFullYear() + '/';
+	    _s += ( '00' + ( _d.getMonth() + 1 ) ).slice(-2) + '/';
+	    _s += ( '00' + _d.getDate() ).slice(-2);
+	    
+	    return _s;
+	},
+	
+	//计算给定日期前后的n月的日期,
+	dateDiffMonth : function( selectedDate, num, type ){
+	    var _s = '',
+	    	_curMonth = 0,
+	    	_curYear = 0,
+	    	_diffYearValue = 0,
+	    	_diffMonthValue = 0,
+	    	_selectNum = num ? num : 4,
+	    	_curType = type ? type : 'before',
+	    	_selectedDateObj =  typeof selectedDate == 'string' ? new Date( selectedDate ) : selectedDate;
+	    	
+	   	_curYear = _selectedDateObj.getFullYear();
+	    _curMonth = _selectedDateObj.getMonth() + 1;
+	    _diffYearValue = _curYear;
+	    if ( _curType == 'before' ) {
+	    	_diffMonthValue = Math.abs( _curMonth - _selectNum );
+		    if ( _curMonth <= _selectNum ) {
+		   		_diffMonthValue = 12 - _diffMonthValue;
+		   		_diffYearValue -= 1;
+		    }
+	    } else {
+	    	_diffMonthValue = Math.abs( _curMonth + _selectNum );
+		    if ( _diffMonthValue > 12 ) {
+		   		_diffMonthValue = _diffMonthValue - 12;
+		   		_diffYearValue += 1;
+		    }
+	    }
+	    	
+	    _s = _diffYearValue + '/';
+	    _s += ( '00' + ( _diffMonthValue ) ).slice(-2);
+	    
+	    return _s;
+	},
+	
+	//按日来变化
+	dateRangeByDay : function( currentDate, num, type ) {
+		var _currentDate = currentDate ? currentDate : sys.todayDate(),
+			_defDate = sys.dateDiffDay( _currentDate, num, type );
+		
+		return ( !type || type == 'before' ) ?  ( _defDate + '—' + _currentDate ) : ( _currentDate + '—' + _defDate );
+	},
+	
+	//按月份来变化
+	dateRangeByMonth : function( currentDate, num, type ) {
+		var _currentDate = currentDate ? currentDate : sys.todayDate(),
+			_defDate = sys.dateDiffMonth( _currentDate, num, type );
+		
+		return ( !type || type == 'before' ) ?  ( _defDate + '—' + _currentDate.slice( 0, 7 ) ) : ( _currentDate.slice( 0, 7 ) + '—' + _defDate );
+	},
+	
+	//按年份来变化
+	dateRangeByYear : function( currentDate ) {
+		var _currentDate = currentDate ?  currentDate : sys.todayDate(),
+			_currentDate = typeof _currentDate == 'string' ? new Date( _currentDate ) : _currentDate,
+			_currentYear = _currentDate.getFullYear( ),
+			_currentMonth = _currentDate.getMonth( ),
+			_currentMonthStr = ( '00' + ( _currentMonth + 1 ) ).slice( -2 ),
+			_currentDateStr = _currentYear + '-' + _currentMonthStr,
+			_beforeDateStr = ( _currentYear - 1 ) + '-' + _currentMonthStr;
+		
+		return _beforeDateStr + '—' + _currentDateStr;
+	},
+	
+	//把日期分开为起始日期和结束日期
+	splitDateRange : function( rangeDateStr ) {
+		if( rangeDateStr.indexOf( '—' ) < 0 ) {
+			sys.log( 'error,there has not \'—\' in this word', rangeDateStr );
+			return; 
+		}
+		
+		var _rangeDateObj = rangeDateStr.split( '—' );
+		
+		return {
+			firstValue : _rangeDateObj[0],
+			secondValue : _rangeDateObj[1]
+		}
+	},
+	
+	//按拼音首字母排列
+	chineseSort : function( arr,empty ) {
+		
+	    if( !String.prototype.localeCompare ) {
+	    	return null;
+	    }
+	     
+	    var letters = "#ABCDEFGHJKLMNOPQRSTWXYZ".split(''); //abcdefghjklmnopqrstwxyz#
+	    var yw = "ABCDEFGHJKLMNOPQRSTUVWXYZ".split('');
+	    var zh = "吖八攃哒妸发旮哈讥咔垃痳拏噢妑七冄仨它穵夕丫帀".split('');
+	     	    //吖八攃哒妸发旮哈讥咔垃痳拏噢妑七冄仨它穵夕丫帀
+	    var segs = [];
+	    var curr;
+	    for( var i = 0; i < letters.length; i++ ){
+	    	curr = {letter: letters[i], data:[]};
+	    	for( var j = 0; j < arr.length; j++ ) {
+	    		if ((!zh[i-1] || zh[i-1].localeCompare(arr[j].name) <= 0) && arr[j].name.localeCompare(zh[i]) == -1 ){
+                	curr.data.push(arr[j]);
+           	 	}
+	    	}
+	        
+	        if(empty || curr.data.length) {
+	            segs.push(curr);
+	            curr.data.sort(function(a,b){
+	                return a.name.localeCompare( b.name );
+	            });
+	        }
+	    }
+	    
+	    return segs;
+	},
+	
+	//设置图表容器的高度
+	setChartHeight : function() {
+		var _windowHeight = window.innerHeight,
+			//_navHeight = document.querySelector( '.mui-bar' ).offsetHeight,
+			_datePickerHeight = document.querySelector( '.ui-picker-menus' ).offsetHeight;
+		
+		document.querySelector( '.ui-chart-content' ).style.height = (　_windowHeight - _datePickerHeight - 80 ) + 'px';
+		if(document.querySelector( '#fn-chart-content-two' )){
+			document.querySelector( '#fn-chart-content-two' ).style.height = (　_windowHeight - _datePickerHeight - 80 ) + 'px';
+		}
+	},
+	
+	getData : function( paramsObject, successFn, failureFn ) {
+		var _exeMethod = decodeURIComponent( sys.getURL( ).method );
+		
+		_exeMethod = decodeURIComponent( _exeMethod );
+		
+		sys.requestData( _exeMethod, paramsObject, successFn, failureFn );
+		
+	},
+	/*获取url上的参数http://ldjc.szsdqh.com:5014/huoliangtj.html?webdomain=xxxx&serverurl=xxxxx&data=xxxx&sessionid=xxxxxx*/
+	
+	requestDataNew: function(method, params, successCallback, failureCallback, networkFailureFn){
+		sys.loading('load');
+		var baseUrl=sys.getURL().serverurl,//'http://192.168.10.14:8080/msd-mobile-e3-router-ifd-web/router',
+			sessionid=sys.getURL().sessionid,
+			_dataObj = {parameter:params};		
+		var _exeParams = {
+				method : method,
+				sessionid: sessionid,
+				format : 'json',
+				v      : '1.0',
+				data   : JSON.stringify( _dataObj ) 
+			};
+			
+			$.ajax({
+				type:"post",
+				dataType: 'json',
+				url: baseUrl,
+				async:true,
+				data: _exeParams,
+				success  : function( resultObj ){					
+					//如果返回的结果里没有这个对象或者是空对象的时候报错 “暂无数据”
+					if ( !resultObj || resultObj.data==null) {						
+						sys.loading('loadClose');
+						return;				
+					};
+					if ( resultObj.success ){
+						//sys.loading('loadClose');
+						var _currentData = '';
+						//还要判断所传的参数是不是回调函数
+						if ( typeof successCallback == 'function' ) successCallback( resultObj );
+						
+					} else {
+						//系统错误的判断
+						sys.loading('loadClose');									
+						if( !resultObj.desc || resultObj.desc == '' ) {
+							resultObj.desc = '系统错误!';
+						}
+						if ( typeof failureCallback == 'function' ) failureCallback( resultObj );
+						
+						sys.toast( resultObj.desc );// + ':' + resultObj.code );
+					}
+				},
+				error : function( error ){
+					//网络错误
+					sys.loading('loadClose');
+					sys.toast('网络错误' );						
+					if ( typeof networkFailureFn == 'function' ) networkFailureFn( error );
+				}
+			});
+		
+	},
+	setLocalstorage: function(key,value){
+		try {
+		    window.localStorage.foobar = "foobar";
+		    window.localStorage.setItem(key,value);
+		} catch(_) {
+		    alert("本地储存写入错误，若为safari浏览器请关闭隐身模式浏览。");
+		}
+	},
+	/*获取当前设备的版本型号*/
+	versions: function(){
+		var u = window.navigator.userAgent;
+		var num ;
+		if(u.indexOf('Trident') > -1){
+			//IE
+			return "IE";
+		}else if(u.indexOf('Presto') > -1){
+			//opera
+			return "Opera";
+		}else if(u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1){
+			//firefox
+			return "Firefox";
+		}else if(u.indexOf('AppleWebKit' && u.indexOf('Safari') > -1) > -1){
+			//苹果、谷歌内核
+			if(u.indexOf('Chrome') > -1){
+				//chrome	
+				return "Chrome";
+			}else if(u.indexOf('OPR')){
+				//webkit Opera
+				return "Opera_webkit"
+			}else{
+				//Safari
+				return "Safari";
+			}
+		}else if(u.indexOf('Mobile') > -1){
+			//移动端
+			if(!!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
+				//ios
+					if(u.indexOf('iPhone') > -1){
+						//iphone
+						return "iPhone"	
+					}else if(u.indexOf('iPod') > -1){
+						//ipod	
+						return "iPod"
+					}else if(u.indexOf('iPad') > -1){
+						//ipad
+						return "iPad"
+					}
+			}else if(u.indexOf('Android') > -1 || u.indexOf('Linux') > -1){
+				//android
+				num = u.substr(u.indexOf('Android') + 8, 3);
+				return {"type":"Android", "version": num};
+			}else if(u.indexOf('BB10') > -1 ){
+				//黑莓bb10系统
+				return "BB10";
+			}else if(u.indexOf('IEMobile')){
+				//windows phone
+				return "Windows Phone"
+			}
+		}
+	},
+	
+	//请求数据等待的效果loading
+	loading: function(flag){
+		if(flag == "load"){
+			var dom = '<div id="loadingBox"><div>拼命加载中...</div></div>';
+			if($('#loadingBox').length > 0){
+				$('#loadingBox').show();
+			}else{
+				$('body').append(dom);
+			}
+		}else if(flag == "loadClose"){
+			$('#loadingBox').hide();
+			$('#loadingBox').remove();
+		}
+	},
+	
+	//优化alert
+	toast: function(msg){
+		var dom = $('<div id="alertBox"><p></p></div>');
+		dom.find('p').text(msg);
+		$('html').append(dom);
+		$('#alertBox').show();
+		
+		setTimeout(function(){
+			$('#alertBox').hide();
+			$('#alertBox').remove();
+		},1000)
+	},
+	showMsg: function(msg){
+		var dom = $('<div class="msgShow"></div>');
+		dom.text(msg);
+		$('html').append(dom);
+		$('.msgShow').show();
+		
+		setTimeout(function(){
+			$('.msgShow').hide();
+			$('.msgShow').remove();
+		},1000)
+	},
+	/*对带小数点的数字进行处理*/
+	accAdd: function (arg1,arg2){  
+	    var r1,r2,m;  
+	    try{r1=arg1.toString().split(".")[1].length}catch(e){r1=0}  
+	    try{r2=arg2.toString().split(".")[1].length}catch(e){r2=0}  
+	    m=Math.pow(10,Math.max(r1,r2))  
+	    return (arg1*m+arg2*m)/m  
+	},
+	
+	//数组去重的方法
+	uniqueArr: function(arr){
+		var retArr = [];		  
+		for (var i = 0, j = arr.length; i < j; i++) {
+		    if (retArr.indexOf(arr[i]) === -1) {
+		    	retArr.push(arr[i]);
+		    }
+		}		 
+		return retArr;					
+	},
+	//数组冒泡排序方法
+	sortObj: function(arr){	    
+	    for(i=0;i<arr.length-1;i++){
+	        for(j=i+1;j<arr.length;j++){
+	        	var cur = arr[i];
+	            if(parseInt(cur.value)>parseInt(arr[j].value)){
+	                var temp=arr[j];
+	                arr[j]=cur;
+	                arr[i]=temp;
+	            }
+	        }
+	    }
+	    return arr;		
+	}
+	
+	
+};

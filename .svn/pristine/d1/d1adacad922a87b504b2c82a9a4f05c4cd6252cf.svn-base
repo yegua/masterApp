@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>物料库存</title>
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	
+</head>
+<body ng-controller="wuliaokcCtrl">	
+  <!--  <header class="mui-bar mui-bar-nav">
+        <h1 class="mui-title">物料库存</h1>
+    </header> -->
+    <ui-content></ui-content>
+  	
+ 	<script type="text/javascript" src="commonjs/sea.js"></script>
+    <script>
+		seajs.config( 
+			{
+				paths : {
+					'common' : "../commonjs",
+				},
+				alias : {
+				    "angular" : "common/angular.min.js",
+				    "angular-gestures" : "common/gestures-hammer.min.js",										
+					"sys"     : "common/sys.js",										
+					'jquery'       :"common/jquery.min.js",
+					'pinyin'  : "common/pinyin.js"
+				}
+			}
+		);
+		
+		seajs.use( "./js/wuliaokc.js" );
+
+    </script>
+	
+	<!--  <script type="text/javascript" src="js/common.js"></script>   
+  	<script src="commonjs/jquery.min.js"></script>
+	<script src="commonjs/angular.min.js"></script>
+	<script type="text/javascript" src="commonjs/gestures-hammer.min.js"></script>
+	<script type="text/javascript" src="commonjs/mui.min.js"></script>
+	<script type="text/javascript" src="commonjs/mui.picker.min.js"></script>
+	<script type="text/javascript" src="commonjs/echarts.min.js"></script>
+	<script type="text/javascript" src="commonjs/pinyin.js"></script>
+	<script type="text/javascript" src="commonjs/sys.js"></script>
+	<script type="text/javascript" src="js/wuliaokc.js"></script>-->	
+</body>
+</html>

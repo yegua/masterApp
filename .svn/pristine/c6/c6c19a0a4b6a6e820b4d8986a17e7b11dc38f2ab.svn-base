@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+	<title>业绩排名</title>	
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+	<div id="container-wrapper">		
+		<ul class="tab-lists flex flex-pack-between flex-align-center">
+	        <li class="flex flex-align-center flex-pack-center" :class="{active: activeIndex === 0}" @click="tab(0)">
+	        	<span class="outer-bg" :class="{outerselected: activeIndex === 0}"></span>
+	        	<em>客户</em>
+	        </li>
+	        <li class="flex flex-align-center flex-pack-center" :class="{active: activeIndex === 1}" @click="tab(1)">
+	        	<span class="inner-bg" :class="{innerselected: activeIndex === 1}"></span>
+	        	<em>部门</em>
+	        </li>
+	    </ul>
+		<div class="date-choose flex flex-pack-between">
+	        <div>
+	            <span v-text="startDate"></span>-
+	            <span v-text="endDate"></span>
+	        </div>                
+	        <div class="date-icon" id="date-show" @click="showDate()">日期</div> 
+	        <div class="picker-box">
+	        	<em></em>
+	        	<p class="date-info">
+	        		<input placeholder="开始时间" id="start" @click="startQueryFn()" v-model="startDate" readonly />           		
+	        		至
+	        		<input placeholder="结束时间" id="end"  @click="endQueryFn()" v-model="endDate" readonly />           		
+	        	</p>
+	        	<p class="date-confirm">
+	        		<button class="btn-confirm" @click="closeDate()">确认</button>
+	        	</p>		
+	        </div>
+	   	</div>         
+	   	<div id="ui-chart-yeji"></div>   		    
+    </div>
+</body>
+	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+	<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/echarts.common.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+	<script type="text/javascript" src="js/customers/yejipm.js"></script>
+</html>

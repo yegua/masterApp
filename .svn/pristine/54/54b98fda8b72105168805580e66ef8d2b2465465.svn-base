@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>网点营业额</title>
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">
+		<link rel="stylesheet" type="text/css" href="fonts/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="css/main.css"/>
+		<style>
+			[v-cloak] {
+			  display: none;
+			}
+			#container-wrapper{
+				height: 100%;
+				padding: 0;
+			}
+			.mui-dtpicker { 				 
+				top: 240px;				
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>
+			<div class="total-results">
+				<div class="ui-data-result" v-text="dataProfit"></div>
+			 	<div class="ui-data-subTitle">
+			 		<span v-text="startDate"></span>-
+                	<span v-text="endDate"></span>收益（万元）
+			 	</div>
+			</div>
+			<div class="date-choose flex flex-pack-between">
+                <div>
+                    <span v-text="startDate"></span>-
+                    <span v-text="endDate"></span>
+                </div>                
+                <div class="date-icon" id="date-show" v-on:click="showDate()">日期</div>                 
+            </div>
+            <div class="picker-box">
+            	<em></em>
+            	<p class="date-info">
+            		<input placeholder="开始时间" id="start" v-on:click="startQueryFn()" v-model="startDate" readonly />           		
+            		至
+            		<input placeholder="结束时间" id="end"  v-on:click="endQueryFn()" v-model="endDate" readonly />           		
+            	</p>
+            	<p class="date-confirm">
+            		<button class="btn-confirm">确认</button>
+            	</p>		
+            </div>
+            <ul class="ui-list flex flex-hw" v-cloak>
+				<li class="ui-list-title"><i class="icon iconfont">&#xe633;</i>收入</li>
+				<li class="ui-list-title"><i class="icon iconfont">&#xe631;</i>支出</li>
+				<li v-for="curData in dataContent">
+					<div class="ui-list-subTitle" v-text="curData.name"></div>
+					<div class="ui-list-content" v-text="curData.value"></div>
+				</li>
+			</ul>
+			<footer class="sumBox flex">
+				<div class="flex-1">总收入：<span v-text="totalIncome"></span>万</div>
+				<div class="flex-1">总支出：<span v-text="totalExpand"></span>万</div>
+			</footer>
+		</div>
+		<div class="mask-layer"></div>
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+		<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/yingyee.js"></script>
+	</body>
+</html>

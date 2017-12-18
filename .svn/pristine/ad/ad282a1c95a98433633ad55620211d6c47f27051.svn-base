@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="DecisionApp">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title>运单查询结果</title>
+	   	<link rel="stylesheet" href="../css/mui.min.css" />
+	    <link rel="stylesheet" href="../css/resultFail.css" />
+	</head>
+	<body ng-controller="resultFailController">
+		<header class="mui-bar mui-bar-nav ui-kehumd-titlebar">
+            <a id="mui-back"></a>
+            <h1 class="mui-title">运单:<span ng-bind="code"></span></h1>
+	    </header>
+	    <div class="mui-content">
+	    	<div class="ui-result-tip">
+	    		抱歉暂无查询记录
+	    	</div>
+	    	<div class="ui-result-company">
+	    		<span class="ui-company-label">快递公司：</span>
+	    		<span class="ui-company-name" ng-bind="companyName"></span>
+	    	</div>
+	    	<div class="ui-btn-layout">
+	    		<a href="tel:{{phone}}" class="ui-company-phone" ng-bind="phone" ng-hide="phoneToggle"></a>
+	    	</div>
+	    	<div class="ui-btn-layout">
+	    		<button type="button" class="ui-company-website" ng-hide="siteToggle" hm-tap="goExpressWebsite();">官网</button>
+	    	</div>
+	    </div>
+	    <script src="../commonjs/jquery.min.js"></script>
+		<script src="../commonjs/angular.min.js"></script>
+		<script type="text/javascript" src="../commonjs/gestures-hammer.min.js"></script>
+		<script type="text/javascript" src="../commonjs/sys.js"></script>
+		<script type="text/javascript" src="js/resultFail.js"></script> 	
+	</body>
+</html>

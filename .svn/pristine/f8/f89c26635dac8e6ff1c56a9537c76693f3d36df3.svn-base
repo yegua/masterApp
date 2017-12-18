@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+	<title>加盟账单</title>
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">	
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	
+		<style type="text/css">
+			html,body{
+				background: #fff;
+			}
+			[v-cloak] {
+			  display: none;
+			}			
+			.table-responsive .table tr th, .table-responsive .table tr td{
+				width: 20%;
+			}
+		</style>
+</head>
+<body>
+	<div id="container-wrapper">
+		<!--<header>
+			<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+		</header>-->
+		<ul class="balance-lists flex flex-pack-between flex-align-center">
+            <li class="flex flex-align-center flex-pack-center">
+            	<span class="yue-bg"></span>
+            	<em>余额：</em><em v-cloak style="color: #f25b4a;">{{totalYue}}元</em>
+            </li>
+            <li class="flex flex-align-center flex-pack-center">
+            	<span class="chongzhi-bg"></span>
+            	<em>在线充值</em>
+            </li>
+       </ul>
+        <div class="date-choose flex flex-pack-between">
+            <div>
+                <span v-text="startDate"></span>-
+                <span v-text="endDate"></span>
+            </div>                
+            <div class="date-icon" id="date-show" @click="showDate()">日期</div> 
+             <div class="picker-box">
+            	<em></em>
+            	<p class="date-info">
+            		<input placeholder="开始时间" id="start" @click="startQueryFn()" v-model="startDate" readonly />           		
+            		至
+            		<input placeholder="结束时间" id="end"  @click="endQueryFn()" v-model="endDate" readonly />           		
+            	</p>
+            	<p class="date-confirm">
+            		<button class="btn-confirm" @click="closeDate()">确认</button>
+            	</p>		
+            </div>
+        </div>
+        <div class="select-wrapper">
+       		<h2 class="data-title flex flex-pack-between flex-align-center">
+       			<span class="total-tickets" style="visibility: hidden;">合计：<em v-text="totalTickets"></em>元</span>
+        		<span class="total-tickets">合计：<em v-text="totalTickets"></em>元</span>
+        	</h2>         		
+       	</div>                  	
+        <div id="ui-chart-website"></div>
+        <p class="more-data" @click="showTable()"></p>
+    	<div id="website-table" class="table-responsive">
+    		<table class="table">
+    			<tr>
+        			<th>日期</th>
+        			<th>票数</th>
+        			<th>中转费</th>
+        			<th>操作费</th>
+        			<th>其他费</th>
+    			</tr>
+    			<tr v-for="item in balanceData">
+    				<td v-cloak>{{item.date.slice(5)}}</td>
+    				<td v-cloak>{{item.tickets}}</td>
+    				<td v-cloak>{{item.trans}}</td>
+    				<td v-cloak>{{item.handle}}</td>
+    				<td v-cloak>{{item.other}}</td>
+    			</tr>
+    		</table>
+    	</div>
+    	<div class="mask-layer"></div>
+	</div>
+	
+	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+	<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+	<script type="text/javascript" src="js/libs/swiper.min.js"></script>
+	<script type="text/javascript" src="js/libs/echarts.common.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+	<script type="text/javascript" src="js/customers/joinBalancePie.js"></script>
+</body>
+</html>

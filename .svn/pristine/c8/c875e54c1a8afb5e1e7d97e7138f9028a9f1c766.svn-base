@@ -1,0 +1,223 @@
+define(function(require,exports,module){
+	require('mui');
+	require('jquery');
+	require('sys');
+	require.async('angular',function(){
+		require.async('angular-gestures');
+		var app=angular.module('myApp',['angular-gestures']).config(function( hammerDefaultOptsProvider ){
+			hammerDefaultOptsProvider.set( { recognizers: [[Hammer.Tap, {time: 250}]] } );
+		}).directive('uiContent',function(){
+			return {
+				restrict : 'E',
+				template: '<div class="mui-content">\
+					<div class="ui-slider-data">\
+						<div class="">\
+							<div class="ui-data-area ui-color-blue">\
+							 	<div class="ui-data-result" ng-bind="sendName"></div>\
+							 	<div class="ui-data-subTitle"><span ng-model="subTitle">2016-11-24</span></div>\
+							</div>\
+						</div>\
+					</div>\
+					<div class="table-responsive">\
+						<table class="table">\
+							<tr><th>品名</th><th>已使用</th><th>未使用</th></tr>\
+							<tr><td>运单</td><td ng-bind="waybillUsed"></td><td ng-bind="waybillUnused"></td></tr>\
+							<tr><td>子单</td><td ng-bind="subBillUsed"></td><td ng-bind="subBillUnused"></td></tr>\
+							<tr><td>回单</td><td ng-bind="backBillUsed"></td><td ng-bind="backBillUnused"></td></tr>\
+							<tr><th class="first"><span>合计</span></th>\
+							<th class="second"><span ng-bind="usedNum"></span>量</th>\
+							<th class="third"><span ng-bind="unusedNum"></span>量</th></tr>\
+						</table>\
+					</div>\</div>',
+				replace : true
+			};
+		}).directive('uiPickerdate',function(){
+			return {
+				restrict : 'E',
+				template : '<footer class="ui-picker">\
+					<div class="ui-picker-mask" ng-hide="pickerToggle" hm-tap="slideDownBtnFn()">\
+					</div>\
+					<div class="ui-picker-datetime" ng-hide="pickerToggle">\
+						<div class="ui-picker-cancel" hm-tap="slideDownBtnFn()">\
+						</div>\
+						<div class="ui-picker-body">\
+					     	<div class="ui-picker-title">按日期查询</div>\
+							<ul class="ui-picker-content">\
+								<li>\
+									<input name="startTime" type="text" class="ui-picker-search" placeholder="起始时间" hm-tap="startTimeFn()" ng-model="startTimeValue" ng-readonly="true" />\
+								</li>\
+								<li>\
+									<input name="endTime" type="text" class="ui-picker-search" placeholder="结束时间"  hm-tap="endTimeFn()" ng-model="endTimeValue" ng-readonly="true" />\
+								</li>\
+							</ul>\
+						</div>\
+					</div>\
+					<div class="ui-picker-menus">\
+						<ul>\
+							<li class="ui-text-left">\
+								<label  hm-tap="beforeDateBtnFn()" >前查\
+								</label>\
+							</li>\
+							<li class="ui-text-center"  hm-tap="slideUpBtnFn()">\
+								<label style="visibility:hidden;" hm-tap="okbtn()">确定\
+								</label>\
+							</li>\
+							<li class="ui-text-right">\
+								<label  hm-tap="afterDateBtnFn()">后查\
+								</label>\
+							</li>\
+						</ul>\
+					</div>\
+				</footer>',
+				replace : true,
+				compile : function( element, attributes ) {
+					
+					require.async('muiPicker');
+					var _options = { 
+						'type' : 'date',
+						'beginYear' : 1900,
+						'endYear' : new Date().getFullYear() 
+					},
+					_picker = null;
+					return {
+						pre : function( scope, element, attributes ) {
+							scope.pickerToggle = true;
+						},
+						post : function( scope, element, attributes ) {
+							scope.slideUpBtnFn = function() {
+								datePickerToggle( !scope.pickerToggle );
+								
+								if( scope.pickerToggle ) {
+									( typeof scope.okDateFn == 'function' ) ? scope.okDateFn( ) : null;
+								}
+								
+							};
+							
+							scope.slideDownBtnFn = function() {
+								datePickerToggle( true );
+							};
+							
+							scope.beforeDateBtnFn = function() {
+								datePickerToggle( true );
+								( typeof scope.beforeDateFn == 'function' ) ? scope.beforeDateFn( ) : null;
+							};
+							
+							scope.afterDateBtnFn = function() {
+								datePickerToggle( true );
+								( typeof scope.afterDateFn == 'function' ) ? scope.afterDateFn( ) : null;
+							};
+							scope.startTimeFn = function() {
+								_options.value = scope.startTimeValue;								
+								_picker = new mui.DtPicker( _options );								
+								_picker.show( function( result ) {								
+									scope.$apply( function(){
+										scope.startTimeValue = result.text;
+									} );																		
+									_picker.dispose();
+								} );
+								
+							};
+							
+							scope.endTimeFn = function() {
+								_options.value = scope.endTimeValue;
+								
+								_picker = new mui.DtPicker( _options );
+								
+								_picker.show( function( result ) {
+									scope.$apply( function(){
+										scope.endTimeValue = result.text;
+									} );
+									
+									_picker.dispose();
+								} );
+							};
+							function datePickerToggle( toggle ) {
+								scope.pickerToggle = toggle;
+								element.find('label')[1].style.visibility = toggle ? 'hidden' : 'visible';
+							};
+												
+						}
+					};
+				}
+			};
+		}).controller('yingyeeCtrl',['$scope','$timeout',function($scope,$timeout){
+			$timeout(function(){ 
+				//initialization
+				//mui('.ui-slider-data').slider( { interval:5000 } );
+	    		$timeout( function(){
+					$scope.endTimeValue = sys.todayDate( );
+					$scope.startTimeValue = $scope.endTimeValue;
+					requestData( );
+					$('.sumBox .first').find('span').text($scope.dataIncome);
+	    		} );
+			});
+			$scope.okbtn=function(){
+				requestData();
+			};
+			$scope.beforeDateFn = function() {			
+				$scope.endTimeValue = sys.dateDiffDay( $scope.startTimeValue, 1, 'before' );
+				$scope.startTimeValue = $scope.endTimeValue;			
+				requestData( );
+			};
+		
+			$scope.afterDateFn = function() {
+				$scope.startTimeValue = sys.dateDiffDay( $scope.endTimeValue, 1, 'after' );
+				$scope.endTimeValue = $scope.startTimeValue;	
+				requestData( );
+			};
+			function requestData( ) {
+				if( !sys.compareWithDate( $scope.endTimeValue, $scope.startTimeValue ) ) {
+					sys.toast( '日期有误，请重新输入' );
+					return;
+				}								
+//				sys.requestDataNew( 'billmake.list',{
+//					startTime : $scope.startTimeValue,
+//					endTime : $scope.endTimeValue,
+//					dayMonth : '0'					
+//				}, function( result ) {
+//					$scope.dataDate = $scope.endTimeValue;
+//					renderChart( result );				
+//				} );				
+				$scope.subTitle=($scope.startTimeValue).replace(/-/g,'/') + '-' + ($scope.endTimeValue).replace(/-/g,'/');
+				if($scope.startTimeValue==$scope.endTimeValue){
+					$scope.subTitle=$scope.startTimeValue.replace(/-/g,'/');
+				};
+				$('.ui-data-subTitle').find('span').text($scope.subTitle);
+				 var dataList=[{sendName: '敏思达',waybillUsed: 898,waybillUnused: 4546,backBillUsed: 456,backBillUnused: 546,subBillUsed: 99,subBillUnused:96}];
+				 renderChart(dataList);
+
+			};	
+			//图表显示
+			function renderChart( result ) {	    		
+	    		var _resultData = result[0],
+	    			_wayUsedNum = parseFloat( _resultData['waybillUsed'] ),
+					_wayUnusedNum = parseFloat( _resultData['waybillUnused'] ),
+					_backUsedNum = parseFloat( _resultData['backBillUsed'] ),
+					_backUnusedNum = parseFloat( _resultData['backBillUnused'] ),
+					_subUsedNum = parseFloat( _resultData['subBillUsed'] ),
+					_subUnusedNum = parseFloat( _resultData['subBillUnused'] ),	
+					_sendName=_resultData['sendName'],
+					//根据数据计算
+					_totalUsedNum = _wayUsedNum + _backUsedNum + _subUsedNum,
+					_totalUnusedNum = _wayUnusedNum + _backUnusedNum + _subUnusedNum;			
+					
+				$timeout( function(){
+					$scope.sendName = _sendName;
+					$scope.waybillUsed = _wayUsedNum;
+					$scope.waybillUnused = _wayUnusedNum;
+					$scope.backBillUsed = _backUsedNum;
+					$scope.backBillUnused = _backUnusedNum;
+					$scope.subBillUsed = _subUsedNum;
+					$scope.subBillUnused = _subUnusedNum;
+					$scope.usedNum = _totalUsedNum;					
+					$scope.unusedNum = _totalUnusedNum;
+					console.log(_wayUsedNum,_wayUnusedNum,_sendName);
+				} );
+				
+	    	}
+		}]);
+	
+	})
+				
+})
+	  	

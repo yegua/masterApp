@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title>菜单</title>
+	    <meta name="apple-mobile-web-app-capable" content="yes"/>
+		<meta name="format-detection" content="telphone=no, email=no"/>
+	  	<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/main.css" />
+		<style>
+			.ui-menus-form {
+				padding: 5px 0px;
+				margin: 5px 5px 0px 5px;
+			}
+			
+			.ui-input-row {
+				position: relative;
+				padding: 5px;
+				margin: 5px 10px;
+				border-radius: 5px;
+				background-color: #FFFFFF;
+			}
+			
+			.ui-input-row input {
+				color: #DCDCDC;
+				width: 100%;
+				outline: none;
+				border: none;
+				border-radius: 0px;
+				height: 32px;
+				padding: 5px 42px 5px 10px;
+				margin: 0px;
+				background-color: rgba( 255, 255, 255, 0 );
+			}
+			.ui-bg-orange{
+				background: #F68714;
+			}
+			.ui-icon-scan {
+				width: 42px;
+				height: 32px;
+				margin: 5px 0px;
+				position: absolute;
+				top: 0px;
+				right: 0px;
+				border-left: dashed 1px darkgrey;
+				background: url(../images/main_icon_scan.png) no-repeat 50%;
+				background-size: 70%;
+			}
+			.ui-popover {
+				width: 90%;
+				height: 300px;
+				position: absolute;
+				display: none;
+				margin: 0 auto;
+				top: 60px;
+				left: 0px;
+				right: 0px;
+				overflow-y: auto;
+				background: #f5f5f5;
+			}
+
+			.ui-popover .ui-bar-popover .mui-table-view {
+			    width: 95%;
+			    height: 300px;
+			    overflow-y: auto;
+			}
+		</style>
+	</head>
+	<body ng-controller="checkCtrl">
+		<div class="mui-content ui-container-menus">
+			<form class="ui-menus-form ui-bg-orange">
+				<div class="ui-input-row">
+					<input type="text" value="请输入运单号查询快件信息" placeholder="请输入运单号查询快件信息"  hm-tap="pageTokuaijian()" id="queryCode" />
+					<a href="#" class="ui-icon-scan" hm-tap="pageToScan();"></a>
+				</div>
+			</form>
+		</div>
+		<!-- <div class="ui-popover ui-bar-popover">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<div>申通</div>
+					<div>中通</div>
+					<div>国通</div>
+					<div>圆通</div>
+					<div>联昊通</div>
+					<div>加运美</div>
+					<div>苏通</div>
+					<div>韵达</div>
+				</li>
+			</ul>
+		</div> -->
+		<script src="../commonjs/jquery.min.js"></script>
+		<script src="../commonjs/angular.min.js"></script>
+		<script type="text/javascript" src="../commonjs/gestures-hammer.min.js"></script>
+		<script type="text/javascript" src="../commonjs/sys.js"></script>
+		<script>
+		var app=angular.module('myApp',['angular-gestures']).config(function( hammerDefaultOptsProvider ){
+			hammerDefaultOptsProvider.set( { recognizers: [[Hammer.Tap, {time: 250}]] } );
+		}).controller('checkCtrl',function($scope){
+			/*var code=sys.getURL().code;
+			$('#queryCode').val(code);
+			if($('#queryCode')[0].value.length>=0){
+				$('.ui-popover').show();
+			};
+			$('#queryCode')[0].onkeyup=function(){
+				$('.ui-popover').show();
+			};
+			$('.mui-table-view-cell').find('div').click(function(){
+				$('.ui-popover').hide();
+			})*/
+			$scope.pageTokuaijian=function(){
+				window.location.href='kuaijiangz.html';
+			}
+		})
+		</script>
+	</body>
+</html>

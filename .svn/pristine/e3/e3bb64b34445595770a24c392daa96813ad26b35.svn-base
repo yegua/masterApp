@@ -1,0 +1,382 @@
+.query-form {	
+	width: 80%;
+	margin: 120px auto;
+}
+.query-form p {
+	position: relative;
+}
+.query-form span {
+	display: inline-block;
+	width: 3em;
+	height: 3em;
+	background: url(../images/icon-scan.png) no-repeat 50%;
+	background-size: 90% 50%;
+}
+.query-form label{
+	width: 80%;
+}
+.query-form label input {
+	width: 100%;
+	border-bottom: 1px solid #959595;
+	padding: 10px 0 10px 10px;
+	font-size: 1.3em;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.query-form p img {
+	width: 2em;
+	height: 2em;
+	position: absolute;
+	right: 0;
+	top: 6px;
+}
+.query-form .btn-check {
+	width: 100%;
+	text-align: center;
+	height: 40px;
+	line-height: 40px;
+	color: #fff;
+	background: #0099ff;
+	border-radius: 30px;
+	margin-top: 50px;
+	font-size: 1.4em;
+}
+
+/*快递详情页面*/
+.query-detail{
+	width: 100%;
+}
+.query-detail h2{
+	width: 100%;
+	padding: 0 3%;
+	font-size: 1.3em;
+	font-weight: 600;
+	height: 2.6em;
+	line-height: 2.6em;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.query-detail h2:nth-child(1) span:nth-child(1){
+	padding-right: 1.8em;
+	background: url(../images/icon-code.png) no-repeat right 45%;
+	background-size: 1.5em;
+}
+.query-detail h2:nth-child(1) a img{
+	width: 1.3em;
+	height: 1.3em;
+	margin-left: 5px;
+}
+.showimg{
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	margin: auto;
+	display: none;
+	width: 90%;
+	overflow: auto;
+	height: 300px;
+	z-index: 999;
+}
+.query-detail ul {
+	border: 1px solid #959595;
+	border-left: none;
+	border-right: none;
+}
+.query-detail ul.query-contents{
+	border-bottom: none;
+	padding-bottom: 30px;
+	/*height: 500px;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;*/
+}
+.query-detail ul li {
+	width: 100%;	
+}
+.query-detail ul li.list-content{
+	color: rgb(255, 64, 0);
+}
+.query-detail ul li:nth-child(1) {
+	border-bottom: 1px solid #959595;
+}
+.query-detail ul li span{
+	padding: 10px 0;
+	text-align: center;
+	font-size: 1.1em;
+	border-right: 1px solid #959595;
+}
+.query-detail ul li span.short {
+	width: 18%;
+}
+.query-detail ul li span.long {
+	width: 28%;
+	border-right: none;
+}
+.query-detail ul li span.ui-short {
+	width: 25%;
+}
+.query-detail ul li span.ui-long {
+	width: 50%;
+	border-right: none;
+}
+.query-detail .query-contents li {
+	position: relative;
+	font-size: 1.2em;
+	border-bottom: 1px solid #959595;
+}
+.query-detail .query-contents span{
+	padding: 15px 0;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	border-right: 1px solid #959595;
+}
+.query-detail .query-contents span em:nth-child(1){
+	font-size: 12px;
+}
+.query-detail .query-contents span em:nth-child(3){
+	font-size: 20px;
+}
+.query-detail .query-contents span.ui-detail-short{
+	width: 27%;			
+}
+.query-detail .query-contents span.ui-detail-long{
+	width: 73%;
+	padding-left: 18px;
+	text-align: left;
+	border-right: none;
+}
+.query-detail .query-contents li.detail-new{
+	color: #0099ff;	
+}
+.query-detail .query-contents li .icon-order{
+	padding: 0;
+	position: absolute;
+	left: 24%;
+	top: 35%;
+	z-index: 99;
+	border: none;
+	font-size: 1.3em;
+	background: #fff;
+}
+.query-detail .query-contents li .icon{
+	position: absolute;
+	left: 23.7%;
+	top: 38%;
+	font-size: 20px;
+	line-height: 20px;
+	background: #fff;
+	padding: 0 2px;;
+	-webkit-transition: font-size 0.25s ease-out 0s;
+	-moz-transition: font-size 0.25s ease-out 0s;
+	transition: font-size 0.25s ease-out 0s;
+}
+.query-detail .query-contents li .old-icon{
+	color: #7d7d7d;
+}
+.query-detail .query-contents li .icon.show{
+	display: block;
+}
+.query-detail .query-contents li .icon.hide{
+	display: none;
+}
+.ui-popover {
+	width: 80%;
+	height: 300px;
+	position: absolute;
+	display: none;
+	margin: 0 auto;
+	top: 27%;
+	left: 10%;
+	overflow-y: auto;
+	z-index: 99;
+	background: #fff;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+}
+
+.ui-popover .ui-bar-popover .mui-table-view {
+    width: 95%;
+    height: 300px;
+    overflow-y: auto;
+}
+.mui-table-view-cell {
+	padding: 5px;
+	font-size: 1.2em;
+}
+.ui-popover .ui-popover-arrow {
+	margin: 0 auto;
+	left: 0px;
+	right: 0px;
+}
+
+/*快递列表样式*/
+.mui-indexed-list {
+	position: relative;
+	border-top: solid 1px #e3e3e3;
+	border-bottom: solid 1px #e3e3e3;
+	overflow-y: scroll;
+	background-color: #fafafa;
+	height: 300px;
+	cursor: default;
+}
+.mui-indexed-list-inner {
+	margin: 0px;
+	padding: 0px;
+	overflow-y: auto;
+	border: none;
+}
+.mui-indexed-list-inner::-webkit-scrollbar {
+	width: 0px;
+	height: 0px;
+	visibility: hidden;
+}
+.mui-indexed-list-empty-alert,
+.mui-indexed-list-inner.empty ul {
+	display: none;
+}
+.mui-indexed-list-inner.empty .mui-indexed-list-empty-alert {
+	display: block;
+}
+.mui-indexed-list-empty-alert {
+	padding: 30px 15px;
+	text-align: center;
+	color: #ccc;
+	padding-right: 45px;
+}
+.mui-ios .mui-indexed-list-inner {
+	width: calc(100% + 10px);
+}
+.mui-indexed-list-group,
+.mui-indexed-list-item {
+	padding: 8px 45px 8px 10px;
+	font-size: 1.4em;
+}
+.mui-ios .mui-indexed-list-group,
+.mui-ios .mui-indexed-list-item,
+.mui-ios .mui-indexed-list-empty-alert {
+	padding-right: 55px;
+}
+.mui-indexed-list-group {
+	background-color: #f7f7f7;
+}
+.mui-indexed-list-item{
+	background: #fff;
+	border-bottom: 1px solid #ccc;
+}
+.mui-indexed-list-search {
+	border-bottom: solid 1px #e3e3e3;
+	z-index: 15;
+	background: #fafafa url(../images/icon-search.png) no-repeat 80% center;
+	background-size: 1.4em;
+}
+.mui-indexed-list-search input {
+	border-radius: 0px;
+	margin: 0px;
+	padding: 5px;
+	width: 70%;	
+}
+.mui-indexed-list-bar {
+	width: 23px;
+	background-color: lightgrey;
+	position: fixed;
+	height: 100%;
+	z-index: 99;
+	right: 0px;
+	-webkit-transition: .2s;
+}
+.mui-indexed-list-bar a {
+	display: block;
+	text-align: center;
+	font-size: 11px;
+	padding: 0px;
+	margin: 0px;
+	line-height: 15px;
+	color: #aaa;
+}
+.mui-indexed-list-bar.active {
+	background-color: rgb(200,200,200);
+}
+.mui-indexed-list-bar.active a {
+	color: #333;
+}
+.mui-indexed-list-bar.active a.active {
+	color: #007aff;
+}
+.mui-indexed-list-alert {
+	position: absolute;
+	z-index: 999;
+	background-color: rgba(0, 0, 0, 0.5);
+	width: 80px;
+	height: 80px;
+	left: 50%;
+	top: 50%;
+	margin-left: -40px;
+	margin-top: -40px;
+	border-radius: 40px;
+	text-align: center;
+	line-height: 80px;
+	font-size: 35px;
+	color: #fff;
+	display: none;
+	-webkit-transition: .2s;
+}
+.mui-indexed-list-alert.active {
+	display: block;
+}
+.mui-indexed-list-group.active-group{
+	background: #F2DEDE;
+}
+/*运单查询失败页面*/
+.ui-result-tip {
+    color: #FF0000;
+    font-weight: bolder;
+	line-height: 42px;
+    text-align: center;
+    margin: 10px;
+    border: 1px dashed #E6E2E2;
+    border-radius: 4px;
+}
+
+.ui-result-tip::before {
+	content: '\00A0';
+	padding: 0px 10px;
+	background: url(../images/icon_alarm.png) no-repeat 50%;
+	background-size: 1.5em;
+}
+
+.ui-result-company {
+	margin: 10px;
+	line-height: 42px;
+}
+
+.ui-company-name {
+	font-weight: bolder;
+}
+
+.ui-btn-layout {
+	width: 100%;
+	padding: 10px 20px;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.ui-company-phone, .ui-company-website {
+	display: inline-block;
+	color: #FFFFFF;
+    text-align: center;
+    width: 100%;
+    height: 32px;
+    padding: 0;
+    border: none;
+    line-height: 32px;
+    border-radius: 4px;
+    background-color: #EC9A43;
+}
+
+.ui-company-phone::before {
+	content: '\00A0';
+	padding: 0px 10px;
+	background: url(../images/icon_phone.png) no-repeat 50%;
+	background-size: 1.5em;
+}

@@ -1,0 +1,400 @@
+$(function(){
+	var picker_top = $('.date-choose').offset().top + $('.date-choose').height() + 20;
+	$('.picker-box').css({
+		top: picker_top + 'px'
+	});
+});
+var windowWidth = $('#chart-wrapper').width();
+var app = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '货量统计',
+		activeIndex: 0,
+		startDate: '',
+		endDate: sys.todayDate(),
+		nowDate: sys.todayDate(),
+		thirdDate: '',
+		outerDatas:[],
+		innerDatas:[],
+		totalTickets: 0,	
+		fenbuData:[],
+		paijianData: [],		
+		data1total: 0,
+		data2total: 0,
+		datas1: 0,
+		datas2: 0,
+		datastotal: 0,
+		dayMonth: '0',
+		tableShow: false
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');
+		this.thirdDate = sys.dateDiffDay(this.nowDate,2,'before');
+		this.requestData('statistics.enteringLeaving');
+		this.requestDataNow();
+		this.requestData('statistics.distribution');
+		this.requestData('delivery.prescription');
+	},
+	methods: {
+		tab: function(index){
+			this.activeIndex = index;
+			this.requestData('statistics.enteringLeaving');
+		},
+		showDate: function(){
+			var self = this;
+			$('.mask-layer').fadeIn();
+			$('.picker-box').fadeIn(200);
+			$('.btn-confirm').click(function(){
+				$('.mask-layer').fadeOut();
+				$('.picker-box').fadeOut(200);
+				self.requestData('statistics.enteringLeaving');
+				self.requestData('statistics.distribution');
+				self.requestData('delivery.prescription');
+			});
+			
+		},
+		startQueryFn: function(){
+			$('.mui-dtpicker').css({
+				top: $('.picker-box').offset().top + 40 + 'px'
+			});
+			var self = this;
+			var _options = { 
+				'type' : self.dayMonth == 0 ? 'date' : 'month',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = self.dayMonth == 0 ? 'date' : 'month';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {
+				console.log(result)				
+				self.startDate = result.text.replace(/-/g,'/');	
+				_picker.dispose();
+			} );
+			
+		},
+		endQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : self.dayMonth == 0 ? 'date' : 'month',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = self.dayMonth == 0 ? 'date' : 'month';
+			_options.value = this.endDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {
+				console.log(result)				
+				self.endDate = result.text.replace(/-/g,'/');						
+				_picker.dispose();
+			} );
+			
+		},
+		changeDate: function(){
+			var self = this;			
+			if(this.dayMonth=='0'){
+				self.dayMonth='1';
+				self.endDate = sys.dateDiffMonth(self.endDate,4,'after');
+				self.startDate = sys.dateDiffMonth(self.startDate,4,'before')				
+			}else if(this.dayMonth=='1'){
+				self.dayMonth='0';
+				self.startDate = sys.dateDiffDay(self.startDate,4,'before');
+				self.endDate = sys.dateDiffDay(self.endDate,4,'after');
+			};
+			this.requestData('statistics.enteringLeaving');
+			this.requestData('statistics.distribution');
+			this.requestData('delivery.prescription');
+		},
+		showTable: function(){
+			this.tableShow = !this.tableShow;
+			$('.table-responsive').slideToggle();
+			if(this.tableShow == true){
+				$('.more-data').addClass('up');
+			}else{
+				$('.more-data').removeClass('up');
+			}
+		},
+		requestDataNow: function(){
+			var self = this;
+			sys.requestDataNew('statistics.enteringLeaving', {
+				startTime : self.thirdDate,
+				endTime : 	self.nowDate,
+				dayMonth : '0'
+			}, function( result ) {
+				result.data.forEach(function(item,index){
+					self.innerDatas.push(item.purchase)
+					self.outerDatas.push(item.shipments)
+				})
+			} );
+		},
+		requestData: function(method){
+			var self = this;
+			sys.requestDataNew(method, {
+				startTime : self.dayMonth != '1' ?  self.startDate : self.startDate + '/01',
+				endTime : self.dayMonth != '1' ?  self.endDate : sys.endDayOfMonth(self.endDate),
+				dayMonth : self.dayMonth
+			}, function( result ) {
+				if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+					sys.toast( '日期有误，请重新输入' );
+					return;
+				}	
+				if(method=='statistics.enteringLeaving'){
+					if(result.data.length == 0){												
+						sys.toast('货量统计暂无数据！');						
+					}
+					self.readerChartouter('ui-container-now',result);										
+				}else if(method == 'statistics.distribution'){
+					if(result.data.length == 0 && self.activeIndex == 0){												
+						sys.showMsg('货量分布暂无数据！');						
+					}
+					self.readerChartfenbu(result);
+				}else if(method == 'delivery.prescription'){
+					if(result.data.length == 0 && self.activeIndex == 1){												
+						sys.showMsg('派送时效暂无数据！');						
+					}
+					self.paijianData = [];
+					self.datastotal = 0;
+					self.data2total = 0;
+					self.data1total = 0;
+					self.datas1 = 0;
+					self.datas2 = 0;
+					result.data.forEach(function(item,index){
+						self.paijianData.push(item);
+						self.data1total += Number(item.dataTotal1);
+						self.datas1 += Number(item.data1);
+						self.datas2 += Number(item.data2);
+						self.data2total += Number(item.dataTotal2);
+						self.datastotal += Number(item.dataTotal1) + Number(item.dataTotal2);
+					});	
+				}
+			} );
+		},
+		readerChartouter: function(el,res){
+			var self = this;
+			var datalist = res.data;
+			var outerData=[],innerData=[],_date=[];
+			datalist.forEach(function(item,index){
+				innerData.push(item.purchase);
+				outerData.push(item.shipments);
+				_date.push(item.date.slice( 5 ))
+			});
+			if(datalist.length == 0){
+				outerData=[];
+				innerData=[];
+			};
+			if(this.dayMonth == '0'){
+				_date = _date.reverse();
+				innerData = innerData.reverse();
+				outerData = outerData.reverse();
+			};
+			//出港数据
+			var _chartObj = echarts.init( document.getElementById(el) );				
+			var _option = {
+				noDataLoadingOption : {
+            		text : '暂无数据,请到系统上维护',
+            		effect : 'bar'
+            	},
+			    title: {
+			        text: ''
+			    },
+			    tooltip: {
+			    	show: false,
+			        trigger: 'axis',			    
+			        formatter: '{b}/{c}件'
+			    },
+			    grid: {
+			        left: '-1%',
+			        right: '6%',
+			        top: '40%',
+			        bottom: '3%',
+			        containLabel: true
+			    },
+			    toolbox: {
+			        show: false
+			    },
+			    xAxis: {
+			        type: 'category',
+			        boundaryGap: false,
+			        data: _date
+			    },
+			    yAxis: {
+			    	type: 'value',
+			    	show: false,
+			    	//min: 'dataMin',
+//			    	max: 'dataMax',
+//			    	interval: 500
+			    },
+			    series: [
+			        {
+			            name:'货量统计',
+			            type:'line',
+			            stack: '总量',
+			            data: self.activeIndex==0 ? outerData :innerData,
+			            itemStyle : { 
+			            	normal: {
+			            		label : {
+			            			show: true,
+			            		},
+			            		color: '#666',
+			            		borderColor: self.activeIndex==0 ? '#ff774b' : '#3575bd',
+			            		borderWidth: 4,
+			            		borderType: 'solid'
+			            	}
+			       		},
+			       		lineStyle: {
+			       			normal: {
+			       				color: self.activeIndex==0 ? '#ff774b' : '#3575bd'
+			       			}
+			       		}
+			        }
+			    ]
+			};
+			$('.chart-container').css({
+				width: windowWidth *0.2*(datalist.length)
+			});
+			$('#chart-wrapper').scrollLeft(windowWidth *0.2*(datalist.length)*0.4);
+			_chartObj.resize();
+			_chartObj.setOption( _option ); 
+		},
+		readerChartfenbu: function(res){			
+			var self = this;
+			var _showListArr = [],
+				_totalNum = 0,
+				_otherNum = 0,
+				_otherData = {},
+				_perLabel = '',
+				_tempLabel = '',
+				_otherAreaDataArr = [],
+				_resultData = res.data;
+			if(_resultData.length == 0){
+				_showListArr = [];
+			};
+			for ( var i = 0; i < _resultData.length; i++ ) {
+				_totalNum += parseFloat( _resultData[i].value );
+			}
+			this.totalTickets = _totalNum;
+			var reg=/^[\u4e00-\u9fa5]{0,}$/;
+			for ( var j = 0; j < _resultData.length; j++ ) {
+				_tempLabel =  ( parseFloat( _resultData[j].value ) / _totalNum * 100 ).toFixed( 2 ) + '%';
+				if ( j < 5 ) {
+					_resultData[j].name = _resultData[j].name;
+					_showListArr.push( _resultData[j] );
+				} else {
+					_otherNum += parseFloat( _resultData[j].value );
+					_otherAreaDataArr.push( _resultData[j] );
+				}
+				
+				if ( j == _resultData.length - 1 ) {
+					_otherData = {
+						name : '其他',
+						value : _otherNum
+					};					
+					_showListArr.push( _otherData );
+				}
+			};
+			$.each(_showListArr,function(_index,_item){
+				if(!reg.test(_item.name)){
+					_item.name="偏远地区";
+				}
+			});
+			this.fenbuData = _showListArr;
+			//饼图
+			var _chartPie = echarts.init( document.getElementById('ui-chart-pie') ),
+		        _pieoption = {	         		
+		        	noDataLoadingOption : {
+		        		text: '暂无数据',
+                        effect: 'bubble',
+		        	},
+					tooltip : {
+				        trigger: 'item',
+				        formatter: "{b}<br/>{d}%"
+				    },
+				    color:['#3575bd', '#46c6ff','#38dab9','#ffd077','#f199f2','#f25b4a'],  
+				    series : [
+				        {
+				            name:'货量分布',
+				            type:'pie',				          				
+				            startAngle: 90,
+				          	radius : [30, 90],
+				          	center: ['50%', '53%'],			         
+				            label: {
+				            	normal: {
+				            		show: true,
+				            		position: 'outer',
+				            		formatter: '{c}票'+ '\n'+'{b}'
+				            	}
+				            },
+				            labelLine: {
+				            	normal:{
+				            		show: true,
+				            		length: 5,
+				            		length2: 15
+				            	}
+				            },
+				            data : _showListArr
+				        }
+				    ]
+				};
+
+		    _chartPie.setOption( _pieoption );
+		},
+
+	},
+
+});
+
+var startX,startY,endX,endY,flagLeft = 0,flagRight = 0;
+var chart = document.getElementById('chart-wrapper');
+// $('#chart-wrapper').bind('touchstart',function(e){
+//      startX = e.originalEvent.changedTouches[0].pageX;
+//      startY = e.originalEvent.changedTouches[0].pageY;
+//  });
+//  $("#chart-wrapper").bind("touchmove",function(e){
+//      //获取滑动屏幕时的X,Y
+//      endX = e.originalEvent.changedTouches[0].pageX;
+//      endY = e.originalEvent.changedTouches[0].pageY;
+//      //获取滑动距离
+//      distanceX = endX-startX;
+//      distanceY = endY-startY;
+//      //判断滑动方向
+//      if(Math.abs(distanceX)>Math.abs(distanceY) && distanceX>0){
+//          flagRight++;
+//          
+//      }else if(Math.abs(distanceX)>Math.abs(distanceY) && distanceX<0){
+//          flagLeft++;
+//          app.endDate = sys.dateDiffDay(app.endDate,1,'after');
+//          console.log(app.endDate);
+//          if(flagLeft >=5){
+//          	return false;
+//          }            
+//      }
+//  })
+chart.addEventListener('touchstart',function(e){
+	startX = e.changedTouches[0].pageX;
+    startY = e.changedTouches[0].pageY;
+},false);
+chart.addEventListener('touchmove',function(e){
+	//获取滑动屏幕时的X,Y
+    endX = e.changedTouches[0].pageX;
+    endY = e.changedTouches[0].pageY;
+    //获取滑动距离
+    distanceX = endX-startX;
+    distanceY = endY-startY;
+    //判断滑动方向
+    if(Math.abs(distanceX)>Math.abs(distanceY) && distanceX>0){
+        flagRight++;
+        
+    }else if(Math.abs(distanceX)>Math.abs(distanceY) && distanceX<0){
+        flagLeft++;
+        app.endDate = sys.dateDiffDay(app.endDate,1,'after');
+        console.log(app.endDate);
+        if(flagLeft >=5){
+        	chart.removeEventListener('touchmove',function(){
+        		console.log('stop');
+        	})
+        }            
+    }
+},false)

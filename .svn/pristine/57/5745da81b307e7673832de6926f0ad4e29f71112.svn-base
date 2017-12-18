@@ -1,0 +1,57 @@
+<!--2016-04-27 09:29-->
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title>其他快递</title>
+	    <link rel="shortcut icon" href="images/favicon.ico">
+	   	<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">
+		<link rel="stylesheet" type="text/css" href="css/queryCheck.css"/>
+		<script type="text/javascript" src="js/libs/mui.min.js"></script>
+	    <style>
+			html, body {
+				height: 100%;
+				overflow: hidden;
+			}
+			.mui-bar {
+				-webkit-box-shadow: none;
+				box-shadow: none;
+			}
+		</style>
+	</head>
+	<body>		
+	    <div id="container-wrapper" class="mui-content ui-kehumd-container">
+			<div id='fn-kehumd-list' class="mui-indexed-list">
+				<div class="mui-indexed-list-search mui-input-row mui-search">
+					<input type="text" class="mui-input-clear mui-indexed-list-search-input" placeholder="" v-model="searchValue" v-on:keyup="searchExpressFn($event)" />
+				</div>
+				<div class="mui-indexed-list-bar">
+					<a v-for="item in letterArr" v-bind:style="{height: itemH + 'px'}" v-text="item" @click="searchLetter($event)"></a>					
+				</div>
+				<div class="mui-indexed-list-alert" v-text="curLetter"></div>
+				<div class="mui-indexed-list-inner" style="width: 90%;">
+					<div class="mui-indexed-list-empty-alert">没有数据</div>
+					<ul class="mui-table-view">
+						<li v-for="item in sortData" v-cloak>
+							<div class="mui-table-view-divider mui-indexed-list-group" v-text="item.letter">								
+							</div>
+							<div class="mui-table-view-cell mui-indexed-list-item" v-for="curData in item.data" @click="selectedExpress(curData)" v-cloak>
+								{{curData.name}}
+							</div>
+						</li>
+						<!--<li class="mui-table-view-cell mui-indexed-list-item" v-for="curData in item.data" @click="selectedExpress(curData)" v-cloak>{{curData.name}}</li>-->
+					</ul>
+				</div>
+			</div>
+	    </div>
+	    
+	    <script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/pinyin.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/expressCompany.js"></script>
+		<script type="text/javascript" src="js/customers/othersExpress.js"></script>
+	</body>
+</html>

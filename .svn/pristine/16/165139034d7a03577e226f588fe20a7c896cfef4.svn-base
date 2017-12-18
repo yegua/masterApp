@@ -1,0 +1,228 @@
+
+/*.swiper-container{
+	height: 100px;
+}
+.swiper-button-prev, .swiper-button-next{
+    top: 35%;
+    width: 15px;
+    height: 15px;
+    -moz-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+}
+.swiper-button-prev, .swiper-container-rtl .swiper-button-next{
+	left: 5px;
+}*/
+#chart-wrapper{
+	width: 100%;
+	height: 100px;
+	overflow-x: scroll;
+}
+.chart-container{
+	height: 100px;
+	position: relative;
+}
+.tab-lists{
+	width: 100%;
+	padding: 10px 8%;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.tab-lists li {
+	color: #999;
+	width: 45%;
+	padding-bottom: 12px;
+	border-bottom: 2px solid #fff; 
+}
+.tab-lists li span{
+	display: inline-block;
+	width: 2.8em;
+	height: 2.8em;	
+}
+.tab-lists li span.outer-bg{
+	background: url(../images/outer-icon.png) no-repeat 50%;
+	background-size: 100% 100%;
+}
+.tab-lists li span.inner-bg{
+	background: url(../images/inner-icon.png) no-repeat 50%;
+	background-size: 100% 100%;
+}
+.tab-lists li span.outerselected{
+	background: url(../images/outer-icon-active.png) no-repeat 50%;
+	background-size: 100% 100%;
+}
+.tab-lists li span.innerselected{
+	background: url(../images/inner-icon-active.png) no-repeat 50%;
+	background-size: 100% 100%;
+}
+.tab-lists li em{
+	font-size: 1.4em;
+	margin-left: 6px;
+}
+.tab-lists li.active{
+	border-color: #0099ff;
+	color: #0099ff;
+}
+
+.content-lists{
+	width: 100%;
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 34em;
+}
+.content-lists.show{
+	display: block;
+}
+.content-lists.hide{
+	display: none;
+}
+.totalData{
+	width: 100%;
+	padding-bottom: 12px;
+}
+.totalData dl{
+	width: 33%;
+	text-align: center;
+	border-right: 1px solid #959595;
+}
+.totalData dl:nth-child(3){
+	border-right: none;
+}
+.totalData dl dt{
+	width: 5.6em;
+	height: 5.6em;
+	border-radius: 100%;
+	color: #fff;
+	text-align: center;
+	line-height: 5.6em;
+	margin: 0 auto;
+}
+.totalData dl dd{
+	text-align: center;
+	margin-top: 10px;
+	font-weight: 600;
+}
+.totalData dl dt.bg-blue{
+	background: #38dab9;
+}
+.totalData dl dt.bg-orange{
+	background: #f8b22d;
+}
+.totalData dl dt.bg-red{
+	background: #f25b4a;
+}
+.date-choose {
+	width: 100%;
+	padding: 5px 20px;
+	background: #eee;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.date-choose .date-icon{
+	padding-right: 26px;
+	background: url(../images/calendar.png) no-repeat right center;
+	background-size: 1.5em;
+}
+.data-title{
+	width: 92%;
+	margin: 0 auto;
+	padding: 8px 0;
+	font-size: 1.3em;
+	font-weight: 600;
+	border-bottom: 1px solid #959595;
+}
+.data-title .change-icon{
+	padding-left: 26px;
+	background: url(../images/icon-change.png) no-repeat left center;
+	background-size: 1.2em;
+}
+.margin-space{
+	width: 100%;
+	height: 10px;
+	background: #eee;
+}
+#ui-chart-pie{
+	width: 100%;
+	height: 220px;
+	margin-top: 10px;
+}
+.content-lists .more-data {
+	width: 100%;
+	padding: 15px 0 20px 0;
+	background: url(../images/icon-more.png) no-repeat 50% 1%;
+	background-size: 2.2em;
+}
+.content-lists .more-data.up{
+	background: url(../images/icon-more-up.png) no-repeat 50% 1%;
+	background-size: 2.2em;
+}
+.table-responsive{
+	width: 100%;
+	display: none;
+}
+.table-responsive .table{
+	width: 92%;
+	border-spacing: 0;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+.table-responsive .table tr{
+	width: 100%;
+	border-bottom: 1px solid #9c9c9c;
+}
+.table-responsive .table tr th,.table-responsive .table tr td{
+	width: 33%;
+	padding: 10px 0;
+	text-align: center;
+	font-size: 1.3em;
+}
+.table-responsive .table tr .alignLeft {
+	text-align: left;
+	width: 20%;
+}
+.table-responsive .table tr .alignCenter {
+	width: 60%;
+}
+.table-responsive .table tr .alignRight {
+	width: 20%;	
+}
+.table-responsive .table tr td{
+	color: #959595;
+}
+.ps-list{
+	width: 92%;
+	padding-bottom: 10px;
+	margin: 0 auto;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.ps-list li {
+	width: 100%;
+	padding: 10px 0;
+	border-top: 1px solid #959595;
+}
+.ps-list li:nth-child(1){
+	border-top: none;
+}
+.ps-list li span{
+	display: inline-block;
+	width: 50%;
+	font-size: 1.3em;
+	padding-left: 30px;
+	font-weight: 600;
+	border-right: 1px solid #9e9e9e;
+}
+.ps-list li span:nth-child(1) em:nth-child(1){
+	text-decoration: underline;
+}
+.ps-list li span em{
+	color: #ff3e00;
+}
+.ps-list li span:nth-child(2){
+	border-right: none;
+}
+
+.none{
+	display:none;
+}

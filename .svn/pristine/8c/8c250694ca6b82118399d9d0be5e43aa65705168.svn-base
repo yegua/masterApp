@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="screen-orientation" content="portrait"/>
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="format-detection" content="telephone=no">
+	    <meta name="full-screen" content="yes">
+	    <meta name="x5-fullscreen" content="true">
+		<title>物料库存</title>
+		<link rel="shortcut icon" href="images/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">	
+		<link rel="stylesheet" type="text/css" href="css/main.css?v=20170921"/>
+		<style type="text/css">
+			#container-wrapper{
+				background: #eee;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<!--<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>-->
+			<div class="mui-content ui-wuliaokc-container">
+				<div class="ui-wuliaokc-toolbar">
+		    		<div class="ui-wuliaokc-search">
+						<input type="text" placeholder="请输入品名" v-on:keyup="searchProduct($event)" v-model="searchValue" />
+					</div>
+					<div class="ui-wuliaokc-countNumLabel">库存数量</div>
+		    	</div>
+				<ul class="ui-wuliaokc-list" v-cloak>
+					<li v-for="curRow in listData">
+						<div class="ui-wuliaokc-category" v-text="curRow.letter">B</div>
+						<div class="ui-wuliaokc-product" v-for="item in curRow.data">
+							<div class="ui-wuliaokc-name" v-text="item.name"></div>
+							<div class="ui-wuliaokc-num" v-text="item.num"></div>
+						</div>
+					</li>
+				</ul>
+		    </div>
+		</div>
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/pinyin.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js?v=20170921"></script>
+		<script type="text/javascript" src="js/customers/wuliaokc.js?v=20170921"></script>
+	</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>个人运单使用</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>	
+	<link rel="stylesheet" type="text/css" href="css/swiper.min.css"/>
+	<link rel="stylesheet" href="css/mui.picker.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+	<style>	
+		.ui-data-result {
+			height: 80px;
+			line-height: 70px;
+			font-size: 26px;
+		}
+		.table-responsive .table tr:nth-child(odd),.table-responsive .table tr:nth-child(even){
+			background: none;
+		}
+		.table-responsive{
+			margin-top: 20px;
+		}
+		.table-responsive .table tr th, .table-responsive .table tr td {
+			border-top: none;
+			padding: 15px;
+			border-bottom: 1px solid #CCC9C9;
+		}
+		.table-responsive .table tr th:nth-child(3), .table-responsive .table tr td:nth-child(3){
+			border-right: none;
+		}
+		.table tr:last-child th{
+			background: #47C0E0;
+			color: #161616;
+		}
+		.table tr:last-child .second {
+			color: #f33;
+		}		
+		.table tr:last-child .third{
+			color: #f60;
+		}
+	</style>
+</head>
+<body ng-controller="yingyeeCtrl">	
+   <!-- <header class="mui-bar mui-bar-nav">
+        <h1 class="mui-title">营业额</h1>
+    </header> -->
+    <ui-content></ui-content>
+  	<ui-pickerdate></ui-pickerdate>
+  	
+  	<script type="text/javascript" src="commonjs/sea.js"></script>
+    <script>
+		seajs.config( 
+			{
+				paths : {
+					'common' : "../commonjs",
+				},
+				alias : {
+				    "angular" : "common/angular.min.js",
+				    "angular-gestures" : "common/gestures-hammer.min.js",
+					"mui"     : "common/mui.min.js",					
+					"sys"     : "common/sys.js",					
+					"muiPicker" : "common/mui.picker.min.js",
+					'jquery'       :"common/jquery.min.js"
+				}
+			}
+		);
+		
+		seajs.use( "./js/yundansy.js" );
+
+    </script>
+	
+</body>
+</html>

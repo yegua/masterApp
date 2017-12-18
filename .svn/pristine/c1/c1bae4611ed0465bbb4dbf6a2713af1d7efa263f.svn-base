@@ -1,0 +1,97 @@
+define(function(require, exports, module){
+	require('jquery');
+	require('sys');	
+	require.async('angular',function(){
+			require.async('angular-gestures');
+			angular.module( 'myApp', [ 'angular-gestures' ] ).config(function( hammerDefaultOptsProvider ){
+				hammerDefaultOptsProvider.set( { recognizers: [[Hammer.Tap, {time: 250}]] } );
+			}).directive( 'uiContent', function(){
+				return {
+					restrict : 'E',
+					replace : true,
+					template : '<div class="mui-content ui-wuliaokc-container">\
+						<div class="ui-wuliaokc-toolbar">\
+				    		<form class="ui-wuliaokc-search">\
+								<input type="search" name="search" placeholder="请输入品名" ng-keyup="searchProduct($event)" ng-model="searchValue" />\
+							</form>\
+							<div class="ui-wuliaokc-countNumLabel">库存数量</div>\
+				    	</div>\
+						<ul class="ui-wuliaokc-list" ng-cloak>\
+							<li ng-repeat="curRow in listData">\
+								<div class="ui-wuliaokc-category" ng-bind="curRow.letter">B</div>\
+								<div class="ui-wuliaokc-product" ng-repeat="item in curRow.data">\
+									<div class="ui-wuliaokc-name" ng-bind="item.name"></div>\
+									<div class="ui-wuliaokc-num" ng-bind="item.num"></div>\
+								</div>\
+							</li>\
+						</ul>\
+				    </div>'
+				};
+			} ).controller( 'wuliaokcCtrl',[ "$scope", "$timeout", function ( $scope, $timeout ) {
+				
+				var _tempSaveData = null;
+		    		
+		    	$scope.listData = [];
+		    	$scope.searchValue = '';
+		    			
+				requestData( );
+				require('pinyin');	
+			    $scope.searchProduct = function( $event ) {
+			    	if ( $event.which == 13 ) {
+						if ( $scope.searchValue === '' &&  $scope.listData.length !== 0 ){
+							$scope.listData = _tempSaveData;
+						} else {
+							sys.loading('load');
+							var _hasSortData = '',
+								_divStr = '',
+								_curr = {},
+								_tempData = null,
+								_result = [];
+								
+							if ( $scope.listData.length !== 0 ) {
+								for( var i = 0; i < $scope.listData.length; i++ ){
+									_curr = { letter : '', data : [] };
+									_tempData = $scope.listData[i].data;
+									
+									for( var j = 0; j < _tempData.length; j ++ ) {
+										if( _tempData[j].name.indexOf( $scope.searchValue ) != -1 ) {
+											_curr.letter = $scope.listData[i].letter;
+											_curr.data.push( _tempData[j] );									
+											_result.push( _curr );
+										}
+									}
+									console.log(_tempData,_curr);
+								}
+								
+								if ( _result.length !== 0 ) {
+									$scope.listData = _result;
+								} else {
+									sys.toast( '没有查询相关记录' );
+								}
+								
+							}
+							
+							sys.loading('loadClose');
+						}
+						
+					}
+			    };
+			    
+				function requestData() {					
+					sys.requestDataNew('material.inventory', {}, function( result ) {
+						var _resultData = result.data,
+						_listData = sys.chineseSort( _resultData );
+							
+						$timeout( function(){
+							$scope.listData = _listData;
+							_tempSaveData = _listData;
+						} );
+						
+					} );
+					
+				}
+		    	
+			} ] );
+		})
+		
+})

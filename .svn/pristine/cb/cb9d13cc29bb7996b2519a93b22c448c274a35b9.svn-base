@@ -1,0 +1,42 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '查询结果',
+		queryDays: 3,
+		billData:[],		
+		queryCode: '',
+		resultList: []
+	},
+	created: function(){
+		this.loadData();
+	},
+	methods: {
+		loadData: function() {		
+			var _listData = localStorage.getItem( 'dec_queryDetailPage_listData' ),
+				_billData = JSON.parse(localStorage.getItem( 'billDetail' )),
+				_curData = JSON.parse( _listData ),
+				_billDetail = _billData.data,
+				_curTrack = _curData.data.track,
+				_newSort = [];				
+			this.queryCode = _curTrack.billcode;
+			this.resultList = _curTrack.details;	
+			var len = _curTrack.details.length;
+			var days = new Date(this.resultList[len-1].scanTime.slice(0,10)) - new Date(this.resultList[0].scanTime.slice(0,10));
+			console.log(this.resultList);
+			this.queryDays = Math.ceil(days/(3600*1000*24));
+//			this.takepart = _billDetail.takepart ? _billDetail.takepart : '-';
+//			this.client = _billDetail.client ? _billDetail.client : '-';
+//			this.weight = _billDetail.weight ? _billDetail.weight : '-';
+//			this.freight = _billDetail.freight ? _billDetail.freight : '-';
+//			this.destination = _billDetail.destination ? _billDetail.destination : '-';
+//			this.customer = _billDetail.customer ? _billDetail.customer : '-';
+//			this.salesman = _billDetail.salesman ? _billDetail.salesman : '-';
+//			this.sitename = _billDetail.sitename ? _billDetail.sitename : '-';
+			this.billData = _billDetail;
+			console.log(_billDetail);
+		},
+		showImg: function(){
+			
+		}
+	}
+})

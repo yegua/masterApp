@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html ng-app="DecisionApp">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title>快递详情</title>
+	   	<link rel="stylesheet" href="../css/mui.min.css" />	    
+	    <link rel="stylesheet" href="../css/queryDetail.css" />
+	</head>
+	<body ng-controller="QueryDetailController">
+		<header class="mui-bar mui-bar-nav ui-kehumd-titlebar">
+            <a class="mui-action-back mui-icon mui-icon-back mui-pull-left"></a>
+            <h1 class="mui-title">快递跟踪详情</h1>
+	    </header>
+	    <div class="mui-content">
+	    	<div class="ui-detail-num">运单号：<span ng-bind="queryCode"></span></div>
+			<ul class="ui-kuaijiangz-list" ng-cloak>
+				<li class="ui-kuaijiangz-content" ng-repeat="resultData in resultList" ng-switch on="$first">
+					<div class="ui-icon-order ui-icon-newestorder" ng-switch-when="true"></div>
+					<div class="ui-icon-order ui-icon-oldorder" ng-switch-default></div>
+					<div class="ui-content-time" ng-bind="resultData.scanTime"></div>
+					<div class="ui-content-detial" ng-bind-html="resultData.desc | to_trusted"></div>
+				</li>
+			</ul>
+	    </div>
+		<script src="../commonjs/jquery.min.js"></script>
+		<script src="../commonjs/angular.min.js"></script>
+		<script type="text/javascript" src="../commonjs/sys.js"></script>		
+		<script type="text/javascript" src="js/queryDetail.js"></script> 	
+	</body>
+</html>

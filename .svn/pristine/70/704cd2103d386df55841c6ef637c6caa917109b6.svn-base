@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="screen-orientation" content="portrait"/>
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="format-detection" content="telephone=no">
+	    <meta name="full-screen" content="yes">
+	    <meta name="x5-fullscreen" content="true">
+		<title>站点大师</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">	
+		<link rel="stylesheet" type="text/css" href="css/queryCheck.css"/>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<!--<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>-->
+			<div class="query-form">
+				<p class="flex flex-pack-between flex-align-center">
+					<span></span>											
+					<label>
+						<!--<em style="display: block;">单号</em>-->
+						<input placeholder="请输入单号" v-model="queryCode" id="querynum-info" v-on:keyup="isNullOfCode()"/>
+					</label>
+				</p>
+				<p>
+					<button class="btn-check" @click="queryCodeFn()">查快递</button>
+				</p>
+			</div>
+			<div class="ui-popover ui-bar-popover">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell" v-for="res in listData">
+						<div data-code="{{res.id}}" v-text="res.data" @click="selectedList(res.id,res.data)">
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/queryCheck.js"></script>
+	</body>
+</html>

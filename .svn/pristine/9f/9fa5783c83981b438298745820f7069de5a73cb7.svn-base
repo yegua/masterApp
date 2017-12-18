@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>货量统计</title>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">
+	<link rel="stylesheet" type="text/css" href="css/swiper.css">
+	<!-- <link rel="stylesheet" href="css/jedate.css" /> -->
+	<link rel="stylesheet" type="text/css" href="css/huoliangtj.css">
+</head>
+<body>
+	<div id="container-wrapper">
+		<header>
+			<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+		</header>
+		<ul class="tab-lists flex flex-pack-between flex-align-center">
+            <li class="flex flex-align-center flex-pack-center" v-bind:class="{active: activeIndex === 0}" v-on:click="tab(0)">
+            	<span class="outer-bg" v-bind:class="{outerselected: activeIndex === 0}"></span>
+            	<em>出港</em>
+            </li>
+            <li class="flex flex-align-center flex-pack-center" v-bind:class="{active: activeIndex === 1}" v-on:click="tab(1)">
+            	<span class="inner-bg" v-bind:class="{innerselected: activeIndex === 1}"></span>
+            	<em>进港</em>
+            </li>
+        </ul>
+            <ul class="totalData flex flex-pack-between flex-align-center">
+                <dl>
+                    <dt class="bg-blue">{{huoliangData[0]}}票</dt>
+                    <dd>今天</dd>
+                </dl>
+                <dl>
+                    <dt class="bg-orange">{{huoliangData[2]}}票</dt>
+                    <dd>昨天</dd>
+                </dl>
+                <dl>
+                    <dt class="bg-red">{{huoliangData[3]}}票</dt>
+                    <dd>前天</dd>
+                </dl>
+            </ul>
+            <div class="date-choose flex flex-pack-between">
+                <div>
+                    <span v-text="startDate"></span>-
+                    <span v-text="endDate"></span>
+                </div>
+                <input type="hidden" id="start">
+                <div class="date-icon" onClick="WdatePicker({el:'start',dateFmt:_dateFmt,vel:'startTime',onpicked:pickedFunc})">日期</div> 
+                <input type="hidden" v-modal="startDate" id="startTime">
+            </div>
+            <h2 class="data-title flex flex-pack-between">
+                <span>货量</span>
+                <span class="change-icon" v-on:click="changeDate()">切换统计</span>
+            </h2>
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><div id="ui-container-now" class="chart-container"></div></div>
+                    <div class="swiper-slide"><div id="ui-container-before" class="chart-container"></div></div>
+                    <div class="swiper-slide"><div id="ui-container-after" class="chart-container"></div></div>
+                </div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+            <p class="margin-space"></p>
+        <div class="content-lists contents-outer"  id="outer" v-bind:class="{show: activeIndex === 0}">
+			<h2 class="data-title flex flex-pack-between">
+        		<span>目的地分布统计</span>
+        		<span class="total-tickets">总票数: {{totalTickets}}</span>
+        	</h2>
+        	<div id="ui-chart-pie"></div>
+        	<p class="more-data" id="out-more-data"></p>
+        	<div id="outer-table" class="table-responsive">
+        		<table class="table">
+        			<tr>
+	        			<th class="alignLeft">地区</th>
+	        			<th class="alignCenter">票量</th>
+	        			<th class="alignRight">占比</th>
+        			</tr>
+        			<tr v-for="item in fenbuData">
+        				<td class="alignLeft">{{item.name}}</td>
+        				<td class="alignCenter">{{item.value}}</td>
+        				<td class="alignRight">{{(item.value/totalTickets*100).toFixed(2)}}%</td>
+        			</tr>
+        		</table>
+        	</div>
+        </div>
+        <div class="content-lists contents-inner"  id="inner" v-bind:class="{show: activeIndex === 1}">
+			<h2 class="data-title">
+        		<span>时效</span>      		
+            </h2>     	
+            <ul class="ps-list">
+            	<li class="flex">
+                    <span>一派：<em>{{data1total}}票</em></span>
+                    <span>签收率：<em>{{(datas1/data1total*100).toFixed(2)}}%</em></span>
+                </li>
+            	<li class="flex">
+                    <span>二派：<em>{{data2total}}票</em></span>
+                    <span>签收率：<em>{{(datas2/data2total*100).toFixed(2)}}%</em></span>
+                </li>
+            	<li class="flex">
+                    <span>综合：<em>{{datastotal}}票</em></span>
+                    <span>签收率：<em>{{((datas1+datas2)/datastotal*100).toFixed(2)}}%</em></span>
+                </li>
+            </ul>
+            <p class="more-data" id="inner-more-data"></p>
+            <div id="inner-table" class="table-responsive">
+        		<table class="table">
+        			<tr>
+	        			<th class="alignLeft">日期</th>
+	        			<th style="width: 40%;">一派签收率</th>
+	        			<th>二派签收率</th>
+        			</tr>
+        			<tr v-for="data in paijianData">
+        				<td class="alignLeft">{{data._date}}</td>
+        				<td style="width: 40%;">{{data.data1ratio}}%</td>
+        				<td>{{data.data1ratio}}%</td>
+        			</tr>
+        		</table>
+        	</div>
+        </div>
+	</div>
+	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<!-- <script type="text/javascript" src="js/libs/jquery.jedate.min.js"></script> -->	
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="js/libs/swiper.min.js"></script>
+	<script type="text/javascript" src="js/libs/echarts.common.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+	<script type="text/javascript" src="js/customers/huoliangtj.js"></script>
+</body>
+</html>

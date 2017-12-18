@@ -1,0 +1,251 @@
+$(function(){
+	var picker_top = $('.date-choose').offset().top + $('.date-choose').height() + 20;
+	$('.picker-box').css({
+		top: picker_top + 'px'
+	});
+//	$('.mask-layer').css({
+//		top: $('.date-choose').offset().top + 'px'
+//	})
+	var _uptop = $('.data-title').offset().top  + $('.data-title').outerHeight();
+	$('.triangle_border_up').css({
+		top: _uptop - 7 + 'px'
+	});
+	$('.select-contents').css({
+		top: _uptop -2 + 'px'
+	});
+	console.log(_uptop)
+});
+var app = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '重量段分析',
+		activeIndex: 0,
+		startDate: '',
+		endDate: sys.todayDate(),
+		totalTickets: 0,	
+		zlfxData:[],
+		dayMonth: '0',
+		tableShow: false,
+		selectData: [],
+		websiteData:['上海','深圳','南京','广州','佛山','珠海','东莞'],
+		clientData: ['上海申通','加运美','联昊通','万通','雅美生活','阿福快来','中远'],
+		typeName: ''
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');
+		this.selectData = this.websiteData;
+		this.typeName = this.selectData[0];
+		this.requestData('statistics.distribution');
+	},
+	methods: {
+		tab: function(index){
+			this.activeIndex = index;
+			if(this.activeIndex == 0){
+				this.selectData = this.websiteData;	
+			}else if(this.activeIndex == 1){
+				this.selectData = this.clientData;				
+			};
+			this.typeName = this.selectData[0];
+		},
+		showDate: function(){
+			var self = this;
+			$('.mask-layer').fadeIn();
+			$('.picker-box').fadeIn(200);
+			$('.select-box').css({
+				zIndex: 1
+			});
+			$('.btn-confirm').click(function(){
+				$('.mask-layer').fadeOut();
+				$('.picker-box').fadeOut(200);	
+				$('.select-box').css({
+					zIndex: 999
+				});
+				self.requestData('statistics.distribution');				
+			});
+			
+		},
+		startQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.startDate = result.text.replace(/-/g,'/');	
+				_picker.dispose();
+			} );
+			
+		},
+		endQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.endDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.endDate = result.text.replace(/-/g,'/');						
+				_picker.dispose();
+			} );
+			
+		},
+		showTable: function(){
+			this.tableShow = !this.tableShow;
+			$('.table-responsive').slideToggle();
+			if(this.tableShow == true){
+				$('.more-data').addClass('up');
+			}else{
+				$('.more-data').removeClass('up');
+			}
+		},
+		showList: function(){
+			$('.mask-layer').fadeIn();
+			$('.select-contents').fadeIn(200);
+			$('.triangle_border_up').fadeIn(200);
+		},
+		searchData: function(){
+			var self = this;
+			var temp=[],curData=[];
+			var dataList = this.selectData;
+			if(this.typeName === ''){
+				if(self.activeIndex == 0){
+					self.selectData = self.websiteData;	
+				}else if(self.activeIndex == 1){
+					self.selectData = self.clientData;				
+				};
+			}else{
+				for(var i=0;i<dataList.length;i++){
+					if(dataList[i].indexOf(self.typeName) != -1){
+						curData.push(dataList[i])
+					}
+				};
+				if(curData.length != 0){
+					self.selectData = curData;
+				}else{
+					sys.toast('查无此记录')
+				}
+			};
+			
+		},
+		chooseType: function(event){
+			$('.mask-layer').fadeOut();
+			$('.select-contents').fadeOut(200);
+			$('.triangle_border_up').fadeOut(200);
+			this.typeName = event.currentTarget.innerHTML;
+			event.currentTarget.className='selected';
+			$(event.currentTarget).siblings().removeClass('selected');
+		},
+		requestData: function(method){
+			var self = this;
+			sys.requestDataNew(method, {
+				startTime : self.dayMonth != '1' ?  self.startDate : self.startDate + '/01',
+				endTime : self.dayMonth != '1' ?  self.endDate : sys.endDayOfMonth(self.endDate),
+				dayMonth : self.dayMonth
+			}, function( result ) {
+				if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+					sys.toast( '日期有误，请重新输入' );
+					return;
+				}					
+				if(result.data.length == 0 && self.activeIndex == 0){												
+					sys.showMsg('货量分布暂无数据！');						
+				}
+				self.readerChartzhongliang(result);				
+			});
+		},
+
+		readerChartzhongliang: function(res){			
+			var self = this;
+			var _showListArr = [],
+				_totalNum = 0,
+				_otherNum = 0,
+				_otherData = {},
+				_perLabel = '',
+				_tempLabel = '',
+				_otherAreaDataArr = [],
+				_resultData = res.data;
+			if(_resultData.length == 0){
+				_showListArr = [];
+			};
+			for ( var i = 0; i < _resultData.length; i++ ) {
+				_totalNum += parseFloat( _resultData[i].value );
+			}
+			this.totalTickets = _totalNum;
+			var reg=/^[\u4e00-\u9fa5]{0,}$/;
+			for ( var j = 0; j < _resultData.length; j++ ) {
+				_tempLabel =  ( parseFloat( _resultData[j].value ) / _totalNum * 100 ).toFixed( 2 ) + '%';
+				if ( j < 5 ) {
+					_resultData[j].name = _resultData[j].name;
+					_showListArr.push( _resultData[j] );
+				} else {
+					_otherNum += parseFloat( _resultData[j].value );
+					_otherAreaDataArr.push( _resultData[j] );
+				}
+				
+				if ( j == _resultData.length - 1 ) {
+					_otherData = {
+						name : '其他',
+						value : _otherNum
+					};					
+					_showListArr.push( _otherData );
+				}
+			};
+			$.each(_showListArr,function(_index,_item){
+				if(!reg.test(_item.name)){
+					_item.name="偏远地区";
+				}
+			});
+			this.zlfxData = _showListArr;
+			//饼图
+			var _chartWebsite = echarts.init( document.getElementById('ui-chart-website') ),
+		        _pieoption = {	         		
+		        	noDataLoadingOption : {
+		        		text: '暂无数据',
+                        effect: 'bubble',
+		        	},
+					tooltip : {
+				        trigger: 'item',
+				        formatter: "{b}<br/>{d}%"
+				    },
+				    color:['#3575bd', '#46c6ff','#38dab9','#ffd077','#f199f2','#f25b4a'],  
+				    series : [
+				        {
+				            name:'货量分布',
+				            type:'pie',				          				
+				            startAngle: 90,
+				          	radius : [30, 93],
+				          	center: ['50%', '53%'],			         
+				            label: {
+				            	normal: {
+				            		show: true,
+				            		position: 'outer',
+				            		formatter: '{c}票'+ '\n'+'{b}'
+				            	}
+				            },
+				            labelLine: {
+				            	normal:{
+				            		show: true,
+				            		length: 5,
+				            		length2: 15
+				            	}
+				            },
+				            data : _showListArr
+				        }
+				    ]
+				};
+
+		    _chartWebsite.setOption( _pieoption );
+		},
+
+	},
+
+});

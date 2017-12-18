@@ -1,0 +1,93 @@
+{
+	"link.html": {
+		"resources": [
+			"css/public.css"
+		],
+		"refer": [
+			"huoliangtj.html",
+			"queryCheck.html",
+			"queryDetail.html",
+			"zhongliangfx.html",
+			"yingyee.html",
+			"joinBalance.html",
+			"joinBalancePie.html"
+		]
+	},
+	"huoliangtj.html": {
+		"resources": [
+			"images/inner-icon.png",
+			"images/border-right.png",
+			"js/libs/mui.picker.min.js",
+			"css/main.css",
+			"images/icon-back.png",
+			"js/libs/mui.min.js",
+			"js/libs/sysCommon.js",
+			"images/icon-change.png",
+			"js/libs/vue.min.js",
+			"js/libs/jquery.min.js",
+			"images/loading.gif",
+			"images/calendar.png",
+			"css/mui.min.css",
+			"css/mui.picker.min.css",
+			"js/libs/echarts.common.min.js",
+			"images/outer-icon.png",
+			"css/reset.css",
+			"js/customers/huoliangtj.js",
+			"images/icon-more-up.png",
+			"images/outer-icon-active.png",
+			"images/icon-more.png",
+			"images/inner-icon-active.png"
+		]
+	},
+	"queryCheck.html": {
+		"resources": [
+			"images/icon-code.png",
+			"css/queryCheck.css",
+			"js/customers/queryCheck.js",
+			"images/icon-scan.png"
+		]
+	},
+	"queryDetail.html": {
+		"resources": [
+			"fonts/iconfont.css",
+			"images/icon-pic.png",
+			"js/customers/queryDetail.js",
+			"fonts/iconfont.woff"
+		]
+	},
+	"zhongliangfx.html": {
+		"resources": [
+			"js/customers/zhongliangfx.js",
+			"images/icon-person.png",
+			"images/icon-website.png",
+			"images/icon-search.png",
+			"images/icon-website-active.png",
+			"js/libs/swiper.min.js",
+			"images/icon-person-active.png"
+		]
+	},
+	"yingyee.html": {
+		"resources": [
+			"js/customers/yingyee.js"
+		]
+	},
+	"joinBalance.html": {
+		"resources": [
+			"images/icon-chz.png",
+			"images/icon-trans.png",
+			"images/icon-yue.png",
+			"images/icon-express.png",
+			"images/icon-pay.png",
+			"images/icon-other.png",
+			"images/icon-chong.png",
+			"images/border-bottom.png",
+			"js/customers/joinBalance.js",
+			"images/icon-total.png"
+		]
+	},
+	"joinBalancePie.html": {
+		"resources": [
+			"js/customers/joinBalancePie.js"
+		]
+	}
+}

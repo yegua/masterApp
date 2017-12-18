@@ -1,0 +1,83 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '加盟账单',
+		startDate: '',
+		endDate: sys.todayDate(),
+		totalYue: 5000,
+		dateActive: 0,		
+		stateFlag: true,
+		totalTickets: 89890,
+		totalWeight: 2544
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,2,'before');//显示前三天的数据
+	},
+	methods: {
+		//出货日期选择
+		shipmentDate: function(){
+			var self = this;
+			this.dateActive = 0;
+			$('.mask-layer').fadeIn();
+			$('.picker-box').fadeIn(200);
+		},
+		//扣款日期选择
+		deductDate: function(){
+			var self = this;
+			this.dateActive = 1;
+			$('.mask-layer').fadeIn();
+			$('.picker-box').fadeIn(200);					
+		},
+		//关闭日期选择框
+		closeDate: function(){
+			var self = this;
+			$('.mask-layer').fadeOut();
+			$('.picker-box').fadeOut(200);
+			if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+				sys.toast( '日期有误，请重新输入' );
+				return;
+			}	
+		},
+		//起始时间选择
+		startQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.startDate = result.text.replace(/-/g,'/');	
+				_picker.dispose();
+			} );
+			
+		},
+		//结束时间选择
+		endQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.endDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.endDate = result.text.replace(/-/g,'/');						
+				_picker.dispose();
+			} );
+			
+		},
+		//切换完成与未完成状态
+		changeState: function(){
+			this.stateFlag = !this.stateFlag;
+		},
+	}
+})

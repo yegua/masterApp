@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <meta name="screen-orientation" content="portrait"/>
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="format-detection" content="telephone=no">
+	    <meta name="full-screen" content="yes">
+	    <meta name="x5-fullscreen" content="true">
+	    <title>运单查询结果</title>
+	   	<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">		
+		<link rel="stylesheet" type="text/css" href="css/queryCheck.css"/>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span>运单：{{code}}</span>
+			</header>
+		    <div class="mui-content">
+		    	<div class="ui-result-tip">
+		    		抱歉暂无查询记录
+		    	</div>
+		    	<div class="ui-result-company">
+		    		<span class="ui-company-label">快递公司：</span>
+		    		<span class="ui-company-name" v-text="companyName"></span>
+		    	</div>
+		    	<div class="ui-btn-layout">
+		    		<a href="tel:{{phone}}" class="ui-company-phone" v-text="phone" v-show="phoneToggle"></a>
+		    	</div>
+		    	<div class="ui-btn-layout">
+		    		<button type="button" class="ui-company-website" v-show="siteToggle" @click="goExpressWebsite();">官网</button>
+		    	</div>
+		    </div>
+		</div>
+		
+	   	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/resultFail.js"></script> 	
+	</body>
+</html>

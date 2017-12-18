@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="screen-orientation" content="portrait"/>
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="format-detection" content="telephone=no">
+	    <meta name="full-screen" content="yes">
+	    <meta name="x5-fullscreen" content="true">
+		<title>网点营业额</title>
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css"/>
+		<style>
+			[v-cloak] {
+			  display: none;
+			}
+			#container-wrapper{
+				height: 100%;
+				padding: 0;
+			}
+			.ui-data-result{
+				font-size: 32px;
+			}
+			.table-responsive .table tr th, .table-responsive .table tr td{
+				width: 16%;
+				font-size: 14px;
+			}
+			.ui-list{
+				height: auto;
+				margin-bottom: 10px;
+			}
+			.ui-list li {
+				width: 94%;
+				border-bottom: 1px solid #959595;
+				margin: 0 auto;
+			}
+			.ui-list li:nth-child(even){
+				border-left: none;
+			}
+			.ui-list li.ui-list-title{
+				font-size: 18px;
+				text-align: left;
+				color: #959595;
+				font-weight: 600;
+			}
+			.ui-list-title img{
+				width: 30px;
+				height: 30px;
+				margin-right: 10px;
+			}
+			.ui-list-subTitle,.ui-list-content{
+				margin: 0;
+				padding: 10px 4px;
+				color: #181818;
+				font-size: 1.2em;
+			}
+			.table-responsive .table tr th, .table-responsive .table tr td{
+				width:17%;
+			}
+			.table-responsive .table tr th:nth-child(1), .table-responsive .table tr td:nth-child(1){
+				width: 15%;
+				text-align: left;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<!--<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>-->
+			<div class="total-results">
+				<div class="ui-data-result" v-text="dataProfit"></div>
+			 	<div class="ui-data-subTitle">
+			 		<span v-text="titleDate"></span>收益(万元)
+			 	</div>
+			</div>
+			<div class="date-choose flex flex-pack-between">
+                <div>
+                    <span v-text="titleDate"></span>
+                </div>                
+                <div class="date-icon" id="date-show" @click="showDate()">日期</div> 
+                <div class="picker-box">
+	            	<em></em>
+	            	<p class="date-info">
+	            		<input type="text" name="startTime" placeholder="开始时间" id="start" @click="startFlag==='start'?'':startQueryFn()" v-model="startDate" readonly onfocus="this.blur();"/>           		
+	            		至
+	            		<input type="text" name="endTime" placeholder="结束时间" id="end"  @click="endFlag==='end'?'':endQueryFn()" v-model="endDate" readonly onfocus="this.blur();"/>           		   		
+	            	</p>
+	            	<p class="date-confirm">
+	            		<button class="btn-confirm" @click="closeDate()">确认</button>
+	            	</p>		
+	            </div>
+           </div>         
+            <ul class="ui-list" v-cloak>
+				<li class="ui-list-title"><img src="images/icon-receiveyue.png"/>收入</li>				
+				<li v-for="curData in dataContent" class="flex flex-pack-between">
+					<div class="ui-list-subTitle" v-text="curData.name"></div>
+					<div class="ui-list-content" v-text="curData.value"></div>
+				</li>
+			</ul>
+			 <p class="more-data" @click="showTable()"></p>
+			<div id="website-table" class="table-responsive">
+    		<table class="table">
+    			<tr>
+        			<th>日期</th>
+        			<th>现金</th>
+        			<th>中转费</th>
+        			<th>操作费</th>
+        			<th>扫描费</th>
+        			<th>其他费</th>
+    			</tr>
+    			<!--<tr v-for="item in balanceData">
+    				<td v-cloak>{{item.date.slice(5,10)}}</td>
+    				<td v-cloak>{{item.cash}}</td>
+    				<td v-cloak>{{item.transit}}</td>
+    				<td v-cloak>{{item.manageFee}}</td>
+    				<td v-cloak>{{item.scanningFee}}</td>
+    				<td v-cloak>{{item.costFee + item.materialScienceFee + item.weighFee + item.toPay + item.monthly}}</td>
+    			</tr>-->
+    		</table>
+    	</div>
+			<div class="mask-layer"></div>
+		</div>
+		
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+		<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/yingyee.js"></script>
+	</body>
+</html>

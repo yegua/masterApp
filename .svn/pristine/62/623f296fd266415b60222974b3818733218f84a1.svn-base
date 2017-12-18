@@ -1,0 +1,130 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '网点营业额',
+		startDate: '',
+		endDate: sys.todayDate(),		
+		selectRanking: '0',
+		activeIndex: 0,
+		dayMonth: '0',
+		titleDate:''
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');
+		this.titleDate = this.startDate + '-' + this.endDate;		
+		this.requestData();
+	},	
+	methods: {
+		//切换客户部门页面
+		tab: function(index){
+			this.activeIndex = index;
+			if(this.activeIndex === 0){
+				this.selectRanking = '0' ;
+			}else{
+				this.selectRanking = '1' ;
+			};			
+			this.requestData();
+		},
+		closeDate: function(){
+			var self = this;
+			$('.mask-layer').fadeOut();
+			$('.picker-box').fadeOut(200);			
+			this.startDate = this.$refs.dateinfo.startDate;
+        	this.endDate = this.$refs.dateinfo.endDate;
+        	if(self.endDate === self.startDate){
+				self.titleDate = self.startDate;
+			}else{
+				self.titleDate = self.startDate + '-' + self.endDate;
+			};
+			if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+				sys.toast( '日期有误，请重新输入' );
+				return;
+			};
+			console.log(this.titleDate)
+			this.requestData();
+		},
+		requestData: function(){
+			var self = this;
+			sys.requestDataNew('performance.ranking', {
+				startTime : self.startDate,
+				endTime : 	self.endDate,
+				dayMonth : '0',
+				selectRanking: self.selectRanking				
+			}, function( result ) {
+				console.log(result);
+				self.renderChart(result);
+			} );
+		},
+		renderChart: function( result ){			
+			var _yAxisData = [], 
+				_xData = [],
+				_resultData = result.data;
+	
+			for ( var j = 0; j < _resultData.length; j++ ) {
+				_yAxisData.push( _resultData[j].name );
+				_xData.push( _resultData[j].value );
+			}
+			
+	        var _chartObj = echarts.init( document.getElementById('ui-chart-yeji') ),
+	            _option = {	            	
+	            	noDataLoadingOption : {
+	            		text : '暂无数据,请到系统上维护',
+	            		effect : 'bar'
+	            	},
+				    tooltip : {
+				        trigger : 'axis'
+				    },
+				    grid : {
+				    	borderWidth : 0,
+	                    x : 80,
+	                    y : 30,
+	                    width : '70%'
+	                },
+				    xAxis : [
+				        {
+				            type : 'value',
+				            boundaryGap : [0, 0.01],
+				            splitLine : {
+				            	show:false
+				            }
+				        }
+				    ],
+				    yAxis : [
+				        {
+				            type : 'category',
+				            splitLine : {
+				            	show:false
+				            },
+				            data : _yAxisData
+				        }
+				    ],
+				    series : [
+				    	{
+				            type : 'bar',
+				            itemStyle : {
+							    normal : {
+							        color : '#F1B370',
+							        label : {
+							        	show : true,
+							        	position: 'right'
+							        }
+							    },
+							    emphasis : {
+							        color : '#111',
+							        label : {
+							        	show: false
+							        }
+							    },
+							},
+				            data : _xData
+				       }
+				    ]
+				};
+		
+	        _chartObj.setOption( _option );
+	        
+		}
+		
+	}
+})

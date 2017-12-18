@@ -1,0 +1,111 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {		
+		startDate: '',
+		endDate: sys.todayDate(),			
+		sum: {
+			wayUsed: 0,
+			wayUnused: 0,
+			backUsed: 0,
+			backUnused: 0,
+			subUsed: 0,
+			subUnused: 0
+		}
+		
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');
+		//横竖屏切换时执行
+		var mql = window.matchMedia("(orientation:portrait)");
+		mql.addListener(function(){
+			//alert(11);
+			//setTimeout(function(){
+				$('.table-responsive').css({
+					width: $('.blue')[0].clientWidth+'px',
+					height: $('.ui-chart-content').height()-$('.blue').height()-65+'px'
+				});
+			//},300)
+		});
+		this.requestData();
+	},
+	methods: {
+		showDate: function(){
+			var self = this;
+			$('.mask-layer').fadeIn();
+			$('.picker-box').fadeIn(200);		
+		},
+		closeDate: function(){
+			var self = this;
+			$('.mask-layer').fadeOut();
+			$('.picker-box').fadeOut(200);
+			if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+				sys.toast( '日期有误，请重新输入' );
+				return;
+			}	
+		},
+		startQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.startDate = result.text.replace(/-/g,'/');	
+				_picker.dispose();
+			} );
+			
+		},
+		endQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.endDate = result.text.replace(/-/g,'/');						
+				_picker.dispose();
+			} );
+			
+		},
+		requestData: function(){	
+			var self = this;
+			var dataList=[
+			   {sendName: '敏思达',waybillUsed: 898.9,waybillUnused: 4546,backBillUsed: 456.7,backBillUnused: 546,subBillUsed: 99,subBillUnused:96.99},
+			   {sendName: '敏思达',waybillUsed: 898.9,waybillUnused: 4546,backBillUsed: 456.7,backBillUnused: 546,subBillUsed: 99,subBillUnused:96.99},
+			   {sendName: '敏思达',waybillUsed: 898.9,waybillUnused: 4546,backBillUsed: 456.7,backBillUnused: 546,subBillUsed: 99,subBillUnused:96.99},
+			   {sendName: '敏思达',waybillUsed: 898.9,waybillUnused: 4546,backBillUsed: 456.7,backBillUnused: 546,subBillUsed: 99,subBillUnused:96.99}],
+			tablehtml='<table class="table">';
+			$.each(dataList,function(index,item){
+				tablehtml+='<tr>';
+				tablehtml+='<td><div>'+item.sendName+'</div></td>';
+				tablehtml+='<td><div>'+item.waybillUsed+'</div></td>';
+				tablehtml+='<td><div>'+item.waybillUnused+'</div></td>';
+				tablehtml+='<td><div>'+item.backBillUsed+'</div></td>';
+				tablehtml+='<td><div>'+item.backBillUnused+'</div></td>';
+				tablehtml+='<td><div>'+item.subBillUsed+'</div></td>';
+				tablehtml+='<td><div>'+item.subBillUnused+'</div></td>';
+				tablehtml+='</tr>';
+				self.sum.backUsed+=parseInt(item.backBillUsed);
+				self.sum.backUnused+=parseInt(item.backBillUnused);
+				self.sum.subUsed+=parseInt(item.subBillUsed);
+				self.sum.subUnused+=parseInt(item.subBillUnused);
+				self.sum.wayUsed+=parseInt(item.waybillUsed);
+				self.sum.wayUnused+=parseInt(item.waybillUnused);
+			});												
+			tablehtml+='</table>';
+			$('.table-responsive').html(tablehtml);
+			$('.table-responsive').css({width: $('.blue').width()+'px',height: $('.ui-chart-content').height()-$('.blue').height()-65+'px'});														
+		}		
+	}
+})

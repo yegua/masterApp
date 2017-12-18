@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+	<title>网点运单使用</title>
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">
+	<link rel="stylesheet" type="text/css" href="fonts/iconfont.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>	
+	<style type="text/css">	
+		.table-responsive{
+			display: block;
+		}	
+		.ui-chart-content{
+			width: 100%;
+			padding: 10px 0;
+			overflow-x: auto; 
+			overflow-y: hidden; 
+			position: relative;
+		}
+		.ui-chart .ui-chart-content .table-responsive{			
+			height: 100%;
+			overflow-y: auto; 
+			overflow-x: auto;
+			z-index:1;
+			margin-bottom: 0;
+		}
+		.table-responsive .table tr th,.table-responsive .table tr td{
+			text-align: center;
+			font-size: 16px;
+			color: #000;
+		}
+		.table-responsive .table tr td{
+			color: #494949;
+		}
+		.table-responsive .table .rowspan-center{
+			line-height: 55px;
+		}
+		
+		.ui-chart-content .tab-top th, .ui-chart-content .table-responsive .table td{
+			padding: 8px 5px;
+			text-align: center;
+		}
+		.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+			width: 70px;
+			font-size: 14px;
+		}
+		.ui-chart-content .tab-top th {
+			border: 1px solid #959595;
+			font-weight: 600;
+			
+		}
+		.ui-chart-content .tab-top th:nth-child(1){
+			border-left: none;
+		}
+		.ui-chart-content .tab-top th:last-child{
+			border-right: none;
+		}
+		.ui-chart-content .table-responsive .table td div {
+			width: 71px;
+		}
+		.ui-chart-content .tab-top .colspan-center div{
+			width: 140px;			
+		}
+		
+		/*横屏*/
+		@media all and (orientation : landscape){			
+			.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+				width: 76px;				
+			}
+			.ui-chart-content .tab-top .colspan-center div{
+				width: 152px;			
+			}
+		}
+		
+		@media screen and (min-width: 768px) {
+			.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+				width: 100px;
+				font-size: 14px;
+			}
+			.ui-chart-content .tab-top .colspan-center div{
+				width: 200px;			
+			}
+		}
+	</style>
+</head>
+<body>	
+  	<div id="container-wrapper">					
+       	<picker-box v-on:close="closeDate()" v-bind:titledate="titleDate" ref="dateinfo"></picker-box>
+       	<div class="ui-chart-content" id="table-chart-content">
+			<table class="tab-top">
+				<tr class="blue">
+					<th rowspan="2"><div>姓名</div></th>					
+					<th colspan="2" class="colspan-center" v-for="item in productName"><div>{{item}}</div></th>
+					<!--<th colspan="2" class="colspan-center"><div>回单</div></th>
+					<th colspan="2" class="colspan-center"><div>子单</div></th>-->
+				</tr>
+				<tr class="blue" v-html="productHtml">
+				</tr>
+			</table>
+			<div class="table-responsive">
+				<table class="table">
+					<tr v-for="item in websiteData">
+						<td v-for="value in item"><div>{{value}}</div></td>						
+					</tr>
+				</table>
+			</div>
+			<table class="tab-top">
+				<tr class="blue">
+					<th><div>合计</div></th>
+					<th><div v-text="sum.wayUsed"></div></th>
+					<th><div v-text="sum.wayUnused"></div></th>
+					<th><div v-text="sum.backUsed"></div></th>
+					<th><div v-text="sum.backUnused"></div></th>
+					<th><div v-text="sum.subUsed"></div></th>
+					<th><div v-text="sum.subUnused"></div></th>
+					</tr>
+			</table>
+		</div>
+		<div class="mask-layer"></div>
+	</div>
+   	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+	<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+	<script type="text/javascript" src="js/customers/template.js"></script> 	
+	<script type="text/javascript" src="js/customers/wangdianyd.js"></script> 		
+</body>
+</html>

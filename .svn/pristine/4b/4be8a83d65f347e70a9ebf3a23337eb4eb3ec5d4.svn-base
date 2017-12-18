@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+	<title>业绩排名</title>	
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">
+	<link rel="stylesheet" type="text/css" href="fonts/iconfont.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css?v=20170921"/>
+	<style type="text/css">
+		[v-cloak] {
+		  display: none;
+		}
+		.tab-lists{
+			width: 96%;
+			margin: 0 auto;
+			padding: 12px 0;
+			border-bottom: 1px solid #959595;
+		}
+		.tab-lists li{
+			width: auto;
+			font-size: 1.3em;
+			margin-right: 20px;
+			color: #181818;
+			padding-bottom: 0;
+		}
+		.tab-lists li em{
+			font-size: 1em;
+			color: #181818;
+		}
+		.table-responsive{
+			display: block;
+			padding:5px 0 30px 0;
+		}
+		.table-responsive .table{
+			width: 96%;
+		}
+		.table-responsive .table tr td ,.table-responsive .table tr th{
+			color: #000;
+		}
+		.table-responsive .table tr .alignLeft {
+			width: 70%;
+		}
+		.table-responsive .table tr .alignRight {
+			text-align: right;
+			width: 30%;
+		}
+	</style>
+</head>
+<body>
+	<div id="container-wrapper">		
+	   	<picker-box v-on:close="closeDate()" v-bind:titledate="titleDate" ref="dateinfo"></picker-box>
+	   	<ul class="tab-lists flex flex-align-center">
+	   		<li>排名选择</li>
+	        <li class="flex flex-align-center flex-pack-center" @click="tab(0)">
+	        	<i class="iconfont" :class="activeIndex === 0?'icon-radio' : 'icon-radio1'" ></i><em>客户</em>
+	        </li>
+	        <li class="flex flex-align-center flex-pack-center" @click="tab(1)">
+	        	<i class="iconfont" :class="activeIndex === 1?'icon-radio' : 'icon-radio1'"></i><em>部门	</em>        	
+	        </li>
+	   </ul>
+	   	<div id="ui-chart-yeji"></div> 
+	   	<div class="table-responsive">
+    		<table class="table">
+    			<tr>
+        			<th class="alignLeft">客户名称</th>       			
+        			<th class="alignRight">票数</th>
+    			</tr>
+    			<tr v-for="item in yejiData">
+    				<td class="alignLeft" v-cloak>{{item.name}}</td>    				
+    				<td class="alignRight" v-cloak>{{item.value}}</td>
+    			</tr>
+    		</table>
+    	</div>
+	   	<div class="mask-layer"></div>
+    </div>
+</body>
+	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+	<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/echarts.common.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js?v=20170921"></script>
+	<script type="text/javascript" src="js/customers/template.js"></script> 
+	<script type="text/javascript" src="js/customers/yejipm.js?v=20170921"></script>
+</html>

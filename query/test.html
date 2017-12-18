@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <title>菜单</title>
+	    <meta name="apple-mobile-web-app-capable" content="yes"/>
+		<meta name="format-detection" content="telphone=no, email=no"/>
+	  	<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/main.css" />
+		<style>
+			
+		</style>
+	</head>
+	<body ng-controller="checkCtrl">
+		<button id="btnGo" hm-tap=pageToKuaijiangz()>进到运单查询页面</button>
+		<script src="../commonjs/jquery.min.js"></script>
+		<script src="../commonjs/angular.min.js"></script>
+		<script type="text/javascript" src="../commonjs/gestures-hammer.min.js"></script>
+		<script>
+		var app=angular.module('myApp',['angular-gestures']).config(function( hammerDefaultOptsProvider ){
+			hammerDefaultOptsProvider.set( { recognizers: [[Hammer.Tap, {time: 250}]] } );
+		}).controller('checkCtrl',function($scope){
+			$scope.pageToKuaijiangz = function( ) {
+				window.location.href='queryCheck.html?code=12345678';
+			};
+		})
+		</script>
+	</body>
+</html>

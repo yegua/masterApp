@@ -1,0 +1,269 @@
+$(function(){
+	var outSwiper = new Swiper('#outer .swiper-container', {
+		initialSlide :1,
+		pagination: '#outer .swiper-pagination',
+	    observer:true,//修改swiper自己或子元素时，自动初始化swiper
+	    observeParents:true//修改swiper的父元素时，自动初始化swiper
+	});
+	var innerSwiper = new Swiper('#inner .swiper-container', {
+	   	initialSlide :1,
+	   	pagination: '#inner .swiper-pagination',
+	    observer:true,//修改swiper自己或子元素时，自动初始化swiper
+	    observeParents:true//修改swiper的父元素时，自动初始化swiper
+	});
+	// $("#start-time").jeDate({
+	// 	skinCell:"jedateblue",
+	//     isinitVal:true,
+	//     festival:false,
+	//     ishmsVal:false,
+	//     fixed:true,
+	//     minDate: '2005-01-01',
+	//     maxDate: '2099-12-31',
+	//     format:"YYYY-MM-DD",
+	//     zIndex:3000,
+	//     choosefun: function(elem,datas){
+	//         console.log("elem"+JSON.stringify(elem));
+	//         console.log("datas"+JSON.stringify(datas));			
+	//     }
+	// });
+});
+function pickedFunc(){
+	app.endDate = $('#startTime').val().replace(/-/g,'/');
+	app.startDate = sys.dateDiffDay($('#startTime').val(),4,'before')
+};
+var app = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '货量统计',
+		activeIndex: 0,
+		startDate: '',
+		endDate: sys.todayDate(),
+		totalTickets: 631644,
+		huoliangData: [1500, 1200, 900, 2000, 1600],
+		huoliangDate: ['7-18','7-17','7-16','7-15','7-14'],
+		fenbuData:[
+			{name: '广东',value: 80121},
+			{name: '浙江',value: 54482},
+			{name: '江苏',value: 47103},
+			{name: '福建',value: 42205},
+			{name: '山东',value: 35915},
+			{name: '其他',value: 371818}
+		],
+		paijianData: [
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-19'},
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-18'},
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-17'},
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-16'},
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-15'}			
+		],
+		totalSum: {}
+	},
+	 watch: {
+	    startDate: function () {
+	      	return sys.dateDiffDay(this.endDate,'before',4)
+	    }
+	},
+	methods: {
+		tab: function(index){
+			this.activeIndex = index;
+		},
+		chooseDate: function(){
+			
+		},
+		readerChartfenbu: function(){
+			var self = this;
+			//饼图
+			var _chartPie = echarts.init( document.getElementById('ui-chart-pie') ),
+		        _pieoption = {	         		
+		        	noDataLoadingOption : {
+		        		text : '暂无数据,请到系统上维护',
+		        		effect : 'bar'
+		        	},
+					tooltip : {
+				        trigger: 'item',
+				        formatter: "{b}<br/>{d}%"
+				    },
+				    color:['#3575bd', '#46c6ff','#38dab9','#ffd077','#f199f2','#f25b4a'],  
+				    series : [
+				        {
+				            name:'货量分布',
+				            type:'pie',				          				
+				            startAngle: 90,
+				          	radius : [30, 85],
+				          	center: ['51%', '53%'],			         
+				            label: {
+				            	normal: {
+				            		show: true,
+				            		position: 'outer',
+				            		formatter: '{c}票'+ '\n'+'{b}'
+				            	}
+				            },
+				            labelLine: {
+				            	normal:{
+				            		show: true,
+				            		length: 5,
+				            		length2: 15
+				            	}
+				            },
+				            data : self.fenbuData
+				        }
+				    ]
+				};
+
+		    _chartPie.setOption( _pieoption );
+		},
+		readerChartouter: function(){
+			var self = this;
+			//出港数据
+			var _chartObjNow = echarts.init( document.getElementById('ui-container-now') ),
+			_chartObjBef = echarts.init( document.getElementById('ui-container-before') ),
+			_chartObjAft = echarts.init( document.getElementById('ui-container-after') );
+			
+			var _option = {
+			    title: {
+			        text: ''
+			    },
+			    tooltip: {
+			        trigger: 'axis'
+			    },
+			    grid: {
+			        left: '-2%',
+			        right: '8%',
+			        bottom: '3%',
+			        containLabel: true
+			    },
+			    toolbox: {
+			        show: false
+			    },
+			    xAxis: {
+			        type: 'category',
+			        boundaryGap: false,
+			        data: self.huoliangDate
+			    },
+			    yAxis: {
+			    	type: 'value',
+			    	show: false,
+			    	//min: 'dataMin',
+			    	//max: 'dataMax',
+			    	//interval: 500
+			    },
+			    series: [
+			        {
+			            name:'邮件营销',
+			            type:'line',
+			            stack: '总量',
+			            data:self.huoliangData,
+			            itemStyle : { 
+			            	normal: {
+			            		label : {
+			            			show: true,
+			            		},
+			            		color: '#f66',
+			            		borderColor: '#f66'
+			            	}
+			       		},
+			       		lineStyle: {
+			       			normal: {
+			       				color: '#f66'
+			       			}
+			       		}
+			        }
+			    ]
+			};
+			_chartObjNow.setOption( _option ); 
+			 _chartObjBef.setOption( _option ); 
+			 _chartObjAft.setOption( _option ); 
+		},
+		renderChartinner: function(){
+			var self = this;
+			 //进港数据
+			var chartObjNow = echarts.init( document.getElementById('inner-container-now') ),
+			chartObjBef = echarts.init( document.getElementById('inner-container-before') ),
+			chartObjAft = echarts.init( document.getElementById('inner-container-after') );
+			var option = {
+			    title: {
+			        text: ''
+			    },
+			    tooltip: {
+			        trigger: 'axis'
+			    },
+			    grid: {
+			        left: '-2%',
+			        right: '8%',
+			        bottom: '3%',
+			        containLabel: true
+			    },
+			    toolbox: {
+			        show: false
+			    },
+			    xAxis: {
+			        type: 'category',
+			        boundaryGap: false,
+			        data: self.huoliangDate
+			    },
+			    yAxis: {
+			    	type: 'value',
+			    	show: false,
+			    	min: 'dataMin',
+			    	//max: 'dataMax',
+			    	interval: 500
+			    },
+			    series: [
+			        {
+			            name:'邮件营销',
+			            type:'line',
+			            stack: '总量',
+			            data:self.huoliangData,
+			            itemStyle : { 
+			            	normal: {
+			            		label : {
+			            			show: true,
+			            		},
+			            		color: '#cecece',
+			            		borderColor: '#f66'
+			            	}
+			       		},
+			       		lineStyle: {
+			       			normal: {
+			       				color: '#f66'
+			       			}
+			       		}
+			        }
+			    ]
+			};
+			 
+			 chartObjNow.setOption( option ); 
+			 chartObjBef.setOption( option ); 
+			 chartObjAft.setOption( option ); 
+		},
+		requestData: function(){
+			var totalSum={data1total:0,data2total: 0,data1radio:'',data2radio:'',datastotal: 0,totalradio: ''};
+			var data1s =0;
+			var data2s = 0;
+			this.paijianData.forEach(function(item,index){
+				totalSum.data1total += item.data1total;
+				totalSum.data2total += item.data2total;
+				data1s += item.data1;
+				data2s += item.data2;
+				totalSum.data1radio = (data1s/totalSum.data1total*100).toFixed(2);
+				totalSum.data2radio = (data2s/totalSum.data2total*100).toFixed(2);
+				totalSum.datastotal = totalSum.data1total + totalSum.data2total;
+				totalSum.totalradio = ((data1s + data2s)/totalSum.datastotal*100).toFixed(2);
+			});
+			console.log(this.paijianData);
+			this.totalSum = totalSum;
+		}
+
+	},
+
+});
+app.readerChartfenbu();
+app.renderChartinner();
+app.readerChartouter();
+app.requestData();
+$('#out-more-data').click(function(){
+	$('#outer-table').slideToggle();
+});
+$('#inner-more-data').click(function(){
+	$('#inner-table').slideToggle();
+});

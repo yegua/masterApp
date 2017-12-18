@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+	<title>货量统计</title>
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">	
+	<link rel="stylesheet" type="text/css" href="css/main.css?v=20170921">	
+		<style type="text/css">
+			html,body{
+				background: #fff;
+			}
+			[v-cloak] {
+			  display: none;
+			}
+		</style>
+</head>
+<body>
+	<div id="container-wrapper">
+		<!--<header>
+			<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+		</header>-->
+		<ul class="tab-lists flex flex-pack-between flex-align-center">
+            <li class="flex flex-align-center flex-pack-center" :class="{active: activeIndex === 0}" @click="tab(0)">
+            	<span class="outer-bg" :class="{outerselected: activeIndex === 0}"></span>
+            	<em>出港</em>
+            </li>
+            <li class="flex flex-align-center flex-pack-center" :class="{active: activeIndex === 1}" @click="tab(1)">
+            	<span class="inner-bg" :class="{innerselected: activeIndex === 1}"></span>
+            	<em>进港</em>
+            </li>
+        </ul>
+            <ul class="totalData flex flex-pack-between flex-align-center">
+                <dl>
+                    <dt class="bg-blue" v-cloak>{{activeIndex == 0 ? outerDatas[0] : innerDatas[0]}}票</dt>
+                    <dd>今天</dd>
+                </dl>
+                <dl>
+                    <dt class="bg-orange" v-cloak>{{activeIndex == 0 ? outerDatas[1] : innerDatas[1]}}票</dt>
+                    <dd>昨天</dd>
+                </dl>
+                <dl>
+                    <dt class="bg-red" v-cloak>{{activeIndex == 0 ? outerDatas[2] : innerDatas[2]}}票</dt>
+                    <dd>前天</dd>
+                </dl>
+            </ul>
+            <div class="date-choose flex flex-pack-between">
+                <div>
+                    <span v-text="startDate"></span>-
+                    <span v-text="endDate"></span>
+                </div>                
+                <div class="date-icon" id="date-show" @click="showDate()">日期</div>
+                <div class="picker-box">
+	            	<em></em>
+	            	<p class="date-info">
+	            		<input type="text" name="startTime" placeholder="开始时间" id="start" @click="startFlag==='start'?'':startQueryFn()" v-model="startDate" readonly onfocus="this.blur();"/>           		
+	            		至
+	            		<input type="text" name="endTime" placeholder="结束时间" id="end"  @click="endFlag==='end'?'':endQueryFn()" v-model="endDate" readonly onfocus="this.blur();"/>           		      		
+	            	</p>
+	            	<p class="date-confirm">
+	            		<button class="btn-confirm" @click="closeDate()">确认</button>
+	            	</p>		
+	            </div>
+            </div>
+            <h2 class="data-title flex flex-pack-between">
+                <span>货量</span>
+                <span class="change-icon" @click="changeDate()">切换统计</span>
+            </h2>
+            <div id="chart-wrapper" @touchstart="touchStart($event)" @touchmove="unbind?touchMove($event):''" @touchend="touchEnd($event)">
+				<div id="ui-container-now" class="chart-container"></div>
+			</div>
+            <p class="margin-space"></p>
+        	<div class="contents-tabs">
+        		<div class="content-lists contents-outer"  id="outer" v-bind:class="{show: activeIndex === 0}">
+					<h2 class="data-title flex flex-pack-between">
+		        		<span>目的地分布统计</span>
+		        		<span class="total-tickets">总票数: {{totalTickets}}</span>
+		        	</h2>
+		        	<div id="ui-chart-pie"></div>
+		        	<p class="more-data" @click="showTable()"></p>
+		        	<div id="outer-table" class="table-responsive">
+		        		<table class="table">
+		        			<tr>
+			        			<th class="alignLeft">地区</th>
+			        			<th class="alignCenter">票量</th>
+			        			<th class="alignRight">占比</th>
+		        			</tr>
+		        			<tr v-for="item in fenbuData">
+		        				<td class="alignLeft">{{item.name}}</td>
+		        				<td class="alignCenter">{{item.value}}</td>
+		        				<td class="alignRight">{{(item.value/totalTickets*100).toFixed(2)}}%</td>
+		        			</tr>
+		        		</table>
+		        	</div>
+		        </div>
+		        <div class="content-lists contents-inner" id="inner" v-bind:class="{show: activeIndex === 1}">
+					<h2 class="data-title">
+		        		<span>时效</span>      		
+		            </h2>     	
+		            <ul class="ps-list">
+		            	<li class="flex">
+		                    <span>一派：<em>{{data1total}}票</em></span>
+		                    <span>签收率：<em>{{data1total !==0 ?(datas1/data1total*100).toFixed(2) : 0.00}}%</em></span>
+		                </li>
+		            	<li class="flex">
+		                    <span>二派：<em>{{data2total}}票</em></span>
+		                    <span>签收率：<em>{{data2total !==0 ?(datas2/data2total*100).toFixed(2) : 0.00}}%</em></span>
+		                </li>
+		            	<li class="flex">
+		                    <span>综合：<em>{{datastotal}}票</em></span>
+		                    <span>签收率：<em>{{datastotal !==0 ?((datas1+datas2)/datastotal*100).toFixed(2) : 0.00}}%</em></span>
+		                </li>
+		            </ul>
+		            <p class="more-data" @click="showTable()"></p>
+		            <div id="inner-table" class="table-responsive">
+		        		<table class="table">
+		        			<tr>
+			        			<th class="alignLeft">日期</th>
+			        			<th style="width: 40%;">一派签收率</th>
+			        			<th>二派签收率</th>
+		        			</tr>
+		        			<tr v-for="data in paijianData">
+		        				<td class="alignLeft">{{data.date.slice(5)}}</td>
+		        				<td style="width: 40%;">{{data.data1Ratio}}%</td>
+		        				<td>{{data.data2Ratio}}%</td>
+		        			</tr>
+		        		</table>
+		        	</div>
+		        </div>
+        	</div>
+        <div class="mask-layer"></div>
+	</div>
+	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+	<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+	<script type="text/javascript" src="js/libs/echarts.common.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js?v=20170921"></script>
+	<script type="text/javascript" src="js/customers/huoliangtj.js?v=20170921"></script>
+</body>
+</html>

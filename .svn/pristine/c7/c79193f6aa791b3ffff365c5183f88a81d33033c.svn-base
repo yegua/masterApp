@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>网点运单使用</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css">
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/swiper.min.css"/>
+	<link rel="stylesheet" href="css/mui.picker.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="css/newfunction-table.css">
+	
+	<style type="text/css">
+		
+		.table-responsive .table .rowspan-center{
+			line-height: 55px;
+		}
+		
+		.ui-chart-content .tab-top th, .ui-chart-content .table-responsive .table td{
+			padding: 8px 5px;
+			text-align: center;
+		}
+		.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+			width: 70px;
+			font-size: 14px;
+		}
+		.ui-chart-content .tab-top th {
+			border: 1px solid #F5FFFA;
+		}
+		.ui-chart-content .table-responsive .table td div {
+			width: 71px;
+		}
+		.ui-chart-content .tab-top .colspan-center div{
+			width: 140px;			
+		}
+		
+		/*横屏*/
+		@media all and (orientation : landscape){			
+			.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+				width: 76px;				
+			}
+			.ui-chart-content .tab-top .colspan-center div{
+				width: 152px;			
+			}
+		}
+		
+		@media screen and (min-width: 768px) {
+			.ui-chart-content .tab-top th div, .ui-chart-content .table-responsive .table td div{			
+				width: 100px;
+				font-size: 14px;
+			}
+			.ui-chart-content .tab-top .colspan-center div{
+				width: 200px;			
+			}
+		}
+	</style>
+</head>
+<body ng-controller="yewuyuanyjCtrl">	
+  <!--  <header class="mui-bar mui-bar-nav">
+        <h1 class="mui-title">业绩排名</h1>
+    </header> -->
+    <ui-content></ui-content>
+  	<ui-pickerdate></ui-pickerdate>
+  	<footer class="ui-toolbar">
+		<ui-index></ui-index>
+	</footer>
+	
+	<script type="text/javascript" src="commonjs/sea.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+    <script>
+		seajs.config( 
+			{
+				paths : {
+					'common' : "../commonjs",
+				},
+				alias : {
+				    "angular" : "common/angular.min.js",
+				    "angular-gestures" : "common/gestures-hammer.min.js",
+					"mui"     : "common/mui.min.js",					
+					"sys"     : "common/sys.js",					
+					"muiPicker" : "common/mui.picker.min.js",					
+					'jquery'       :"common/jquery.min.js"					
+				}
+			}
+		);
+		
+		seajs.use( "./js/wangdianyd.js" );
+
+    </script>
+  		
+</body>
+</html>

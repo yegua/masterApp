@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="screen-orientation" content="portrait"/>
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="format-detection" content="telephone=no">
+	    <meta name="full-screen" content="yes">
+	    <meta name="x5-fullscreen" content="true">
+		<title>承包区余额</title>
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css"/>
+		<style>
+			[v-cloak] {
+			  display: none;
+			}
+			.total-results {
+				padding: 45px 0;
+			}
+			.ui-data-result{
+				font-size: 32px;
+			}
+			.ui-list{
+				width: 96%;
+				margin: 0 auto;
+			}
+			.ui-list-subTitle,.ui-list-content{
+				font-size: 1.3em;
+				padding: 6px 6px 10px 6px;
+			}
+			.ui-list li{
+				width: 25%;
+			}
+			.ui-list li:nth-child(even){
+				border-left: none;
+			}
+			.ui-list-subTitle{
+				border-bottom: 1px solid #959595;
+				color: #000;
+			}
+			.ui-list-content{
+				font-size: 1.25em;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<!--<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>-->
+			<div class="total-results">
+				<div class="ui-data-result" v-text="companyName"></div>
+			</div>
+			<div class="date-choose flex flex-pack-between">
+                <div>
+                    <span v-text="titleDate"></span>
+                </div>                
+                <div class="date-icon" id="date-show" @click="showDate()">日期</div> 
+                <div class="picker-box">
+	            	<em></em>
+	            	<p class="date-info">
+	            	<input type="text" name="startTime" placeholder="开始时间" id="start" @click="startFlag==='start'?'':startQueryFn()" v-model="startDate" readonly onfocus="this.blur();"/>           		
+	            		至
+	            	<input type="text" name="endTime" placeholder="结束时间" id="end"  @click="endFlag==='end'?'':endQueryFn()" v-model="endDate" readonly onfocus="this.blur();"/>  
+	            	</p>
+	            	<p class="date-confirm">
+	            		<button class="btn-confirm" @click="closeDate()">确认</button>
+	            	</p>		
+	            </div>
+          </div>           
+            <ul class="ui-list flex flex-hw" v-cloak>				
+				<li v-for="curData in dataContent">
+					<div class="ui-list-subTitle" v-text="curData.name"></div>
+					<div class="ui-list-content" v-text="curData.value"></div>
+				</li>
+			</ul>
+			<div class="mask-layer"></div>
+		</div>
+		
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+		<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/chengbaoquyue.js"></script>
+	</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>货量统计</title>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">
+	<link rel="stylesheet" type="text/css" href="css/swiper.css">
+	<!-- <link rel="stylesheet" href="css/jedate.css" /> -->
+	<link rel="stylesheet" type="text/css" href="css/huoliangtj.css">
+</head>
+<body>
+	<div id="container-wrapper">
+		<header>
+			<a href="javascript:history.back(-1)" class="icon-back"></a>{{title}}
+		</header>
+		<ul class="tab-lists flex flex-pack-between flex-align-center">
+            <li class="flex flex-align-center flex-pack-center" v-bind:class="{active: activeIndex === 0}" v-on:click="tab(0)">
+            	<span class="outer-bg" v-bind:class="{outerselected: activeIndex === 0}"></span>
+            	<em>出港</em>
+            </li>
+            <li class="flex flex-align-center flex-pack-center" v-bind:class="{active: activeIndex === 1}" v-on:click="tab(1)">
+            	<span class="inner-bg" v-bind:class="{innerselected: activeIndex === 1}"></span>
+            	<em>进港</em>
+            </li>
+        </ul>
+        <div class="content-lists contents-outer"  id="outer" v-bind:class="{show: activeIndex === 0}">
+        	<ul class="totalData flex flex-pack-between flex-align-center">
+        		<dl>
+        			<dt class="bg-blue">54656票</dt>
+        			<dd>今天</dd>
+        		</dl>
+        		<dl>
+        			<dt class="bg-orange">75676票</dt>
+        			<dd>昨天</dd>
+        		</dl>
+        		<dl>
+        			<dt class="bg-red">65768票</dt>
+        			<dd>前天</dd>
+        		</dl>
+        	</ul>
+        	<div class="date-choose flex flex-pack-between">
+        		<span>{{startDate}} - {{endDate}}</span>
+        		<input type="hidden" id="startTime">
+        		<div class="date-icon" v-on:click="chooseDate()">日期</div>       		
+        	</div>
+        	<h2 class="data-title flex flex-pack-between">
+        		<span>货量</span>
+        		<span class="change-icon">切换统计</span>
+        	</h2>
+        	<div class="swiper-container">
+			    <div class="swiper-wrapper">
+			        <div class="swiper-slide"><div id="ui-container-now" class="chart-container"></div></div>
+			        <div class="swiper-slide"><div id="ui-container-before" class="chart-container"></div></div>
+			        <div class="swiper-slide"><div id="ui-container-after" class="chart-container"></div></div>
+			    </div>
+			    <!-- 如果需要分页器 -->
+		    	<div class="swiper-pagination"></div>
+			</div>
+			<p class="margin-space"></p>
+			<h2 class="data-title flex flex-pack-between">
+        		<span>目的地分布统计</span>
+        		<span class="total-tickets">总票数: {{totalTickets}}</span>
+        	</h2>
+        	<div id="ui-chart-pie"></div>
+        	<p class="more-data" v-on:click="showMore()"></p>
+        	<div id="outer-table" class="table-responsive">
+        		<table class="table">
+        			<tr>
+	        			<th>地区</th>
+	        			<th>票量</th>
+	        			<th>占比</th>
+        			</tr>
+        			<tr v-for="item in fenbuData">
+        				<td>{{item.name}}</td>
+        				<td>{{item.value}}</td>
+        				<td>{{(item.value/totalTickets*100).toFixed(2)}}%</td>
+        			</tr>
+        		</table>
+        	</div>
+        </div>
+        <div class="content-lists contents-inner"  id="inner" v-bind:class="{show: activeIndex === 1}">
+        	<ul class="totalData flex flex-pack-between flex-align-center">
+        		<dl>
+        			<dt class="bg-blue">54656票</dt>
+        			<dd>今天</dd>
+        		</dl>
+        		<dl>
+        			<dt class="bg-orange">75676票</dt>
+        			<dd>昨天</dd>
+        		</dl>
+        		<dl>
+        			<dt class="bg-red">65768票</dt>
+        			<dd>前天</dd>
+        		</dl>
+        	</ul>
+        	<div class="date-choose flex flex-pack-between">
+        		<span>{{startDate}} - {{endDate}}</span>
+        		<div class="date-icon" id="end-time">日期</div>
+        	</div>
+        	<h2 class="data-title flex flex-pack-between">
+        		<span>货量</span>
+        		<span class="change-icon">切换统计</span>
+        	</h2>
+        	<div class="swiper-container">
+			    <div class="swiper-wrapper">
+			        <div class="swiper-slide"><div id="inner-container-now" class="chart-container"></div></div>
+			        <div class="swiper-slide"><div id="inner-container-before" class="chart-container"></div></div>
+			        <div class="swiper-slide"><div id="inner-container-after" class="chart-container"></div></div>
+			    </div>
+		    	<div class="swiper-pagination"></div>
+			</div>
+			<p class="margin-space"></p>
+			<h2 class="data-title">
+        		<span>时效</span>      		
+        	</h2>
+        </div>
+	</div>
+	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<!-- <script type="text/javascript" src="js/libs/jquery.jedate.min.js"></script> -->	
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="js/libs/swiper.min.js"></script>
+	<script type="text/javascript" src="js/libs/echarts.common.min.js"></script>
+	<script type="text/javascript" src="js/customers/huoliangtj.js"></script>
+</body>
+</html>

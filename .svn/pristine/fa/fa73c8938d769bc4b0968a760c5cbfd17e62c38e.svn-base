@@ -1,0 +1,212 @@
+var app = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '加盟账单',		
+		startDate: '',
+		endDate: sys.todayDate(),
+		titleDate: '',
+		totalTickets: 0,
+		totalBalance: 53454,
+		totalYue: 50000,
+		tableShow: false,
+		balanceData: [],		
+		selectData:[],
+		website: [],
+		_balanceData: [],
+		typeName: ''
+		
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');	
+		this.titleDate = this.startDate + '-' + this.endDate;
+		this.requestData();		
+	},
+	methods: {		
+		closeDate: function(){
+			var self = this;
+			$('.mask-layer').fadeOut();
+			$('.picker-box').fadeOut(200);			
+			this.startDate = this.$refs.dateinfo.startDate;
+        	this.endDate = this.$refs.dateinfo.endDate;
+        	if(self.endDate === self.startDate){
+				self.titleDate = self.startDate;
+			}else{
+				self.titleDate = self.startDate + '-' + self.endDate;
+			};
+			if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+				sys.toast( '日期有误，请重新输入' );
+				return;
+			};
+			$('.select-box').css({
+				zIndex: 999
+			});	
+			console.log(this.titleDate)
+			this.requestData();
+		},
+		payShow: function(){
+			$('.test-pay').show();
+			$('.mask-layer').show();
+			$('.test-pay').find('img').click(function(){
+				$('.test-pay').hide();
+				$('.mask-layer').hide();
+			})
+		},
+		showTable: function(){
+			this.tableShow = !this.tableShow;
+			$('.table-responsive').slideToggle();
+			if(this.tableShow == true){
+				$('.more-data').addClass('up');
+			}else{
+				$('.more-data').removeClass('up');
+			}
+		},
+		//选择下拉框出现
+		showList: function(){
+			$('.mask-layer').fadeIn();
+			$('.select-contents').fadeIn(200);
+			$('.triangle_border_up').fadeIn(200);
+			$('#container-wrapper').addClass('disScroll');
+		},
+		//输入框搜索关键字查询选择下拉框
+		searchData: function(e){
+			var self = this;
+			var u = window.navigator.userAgent;
+			function searchInput(){
+				var temp=[],curData=[];
+				var dataList = self.selectData;
+				if(self.typeName === ''){
+					self.selectData = self.website;
+				}else{
+					for(var i=0;i<dataList.length;i++){
+						if(dataList[i].indexOf(self.typeName) != -1){
+							curData.push(dataList[i])
+						}
+					};
+					if(curData.length != 0){
+						self.selectData = curData;
+					}else{
+						sys.toast('查无此记录')
+					}
+				};
+			};
+			if(u.indexOf('AppleWebKit' && u.indexOf('Safari') > -1) > -1){
+				if(e.which === 13){
+					searchInput();
+				}
+			}else{
+				searchInput();
+			};
+			$('.icon-search').click(searchInput);
+		},
+		//选择对应网点或客户名称
+		chooseType: function(event){
+			$('.mask-layer').fadeOut();
+			$('.select-contents').fadeOut(200);
+			$('.triangle_border_up').fadeOut(200);
+			$('#container-wrapper').removeClass('disScroll');
+			this.typeName = event.currentTarget.innerHTML;
+			event.currentTarget.className='selected';
+			$(event.currentTarget).siblings().removeClass('selected');
+		},
+		requestData: function(){
+			var self = this;
+			sys.requestDataNew('statistics.joinAcc', {
+				startTime : self.dayMonth != '1' ?  self.startDate : self.startDate + '/01',
+				endTime : self.dayMonth != '1' ?  self.endDate : sys.endDayOfMonth(self.endDate),
+				dayMonth : self.dayMonth
+			}, function( result ) {
+				if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+					sys.toast( '日期有误，请重新输入' );
+					return;
+				}					
+				if(result.data.length == 0){												
+					sys.toast('暂无数据！');						
+				};
+				console.log(result.data);
+				self.balanceData = result.data;
+//				var obj=[{name: '其他',value: 15000},{name: '上海申通',value: 2555},
+//				{name: '深圳申通',value: 3145},{name: '广州申通',value: 1153},{name: '福建申通',value: 5000},
+//				{name: '佛山申通',value: 4000}];
+				self.readerChartbalance(result);				
+			});
+		},
+		readerChartbalance: function(result){			
+			var self = this;
+			var _showListArr = [],
+				_totalNum = 0,				
+				_resultData = result.data;		
+			if(_resultData.length == 0){
+				_showListArr = [];
+			};
+			for ( var i = 0; i < _resultData.length; i++ ) {
+				_totalNum +=  _resultData[i].votes;
+				var _tempObj={};
+				_tempObj['name'] = _resultData[i].siteName;
+				_tempObj['value'] = _resultData[i].votes;
+				self.website.push(_resultData[i].siteName);
+				self.selectData.push(_resultData[i].siteName);
+				_showListArr.push(_tempObj);
+			}			
+			this.totalTickets = _totalNum;
+			this._balanceData = _showListArr;
+			this.typeName = this.selectData[0];	
+			//饼图
+			var _chartPie = echarts.init( document.getElementById('ui-chart-website') ),
+		        _pieoption = {
+		        	baseOption:{
+			        		noDataLoadingOption : {
+			        		text: '暂无数据',
+	                        effect: 'bubble',
+			        	},
+						tooltip : {
+					        trigger: 'item',
+					        formatter: "{b}<br/>{d}%"
+					    },
+					    color:['#3575bd', '#46c6ff','#38dab9','#ffd077','#f199f2','#f25b4a'],  
+					    series : [
+					        {
+					            name:'货量分布',
+					            type:'pie',						           
+					          	radius : [30, 82],
+					          	center: ['50%', '53%'],			         
+					            label: {
+					            	normal: {
+					            		show: true,
+					            		position: 'outer',
+					            		formatter: '{c}票'+ '\n'+'{b}'
+					            	}
+					            },
+					            labelLine: {
+					            	normal:{
+					            		show: true,
+					            		length: 6,
+					            		length2: 15
+					            	}
+					            },
+					            data : _showListArr.reverse()
+					        }
+					    ],
+		        	},
+		        	media: [
+		        	    {
+		        	    	query:{        	    	
+			        	    	minWidth: 360       	    	
+			        	    },
+			        	    option:{
+			        	    	series:[{
+			        	    		radius : [35, 95],
+			      	    	       	center: ['50%', '55%'],
+			        	    	}]       	    	            	    	
+			        	    }
+		        	    }
+		        	]
+		        	
+				};
+
+		    _chartPie.setOption( _pieoption );
+		},
+
+	},
+
+});

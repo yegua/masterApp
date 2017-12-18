@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="screen-orientation" content="portrait"/>
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="format-detection" content="telephone=no">
+	    <meta name="full-screen" content="yes">
+	    <meta name="x5-fullscreen" content="true">
+		<title>承包区余额</title>
+		<link rel="shortcut icon" href="images/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css?v=20170921"/>
+		<style>
+			[v-cloak] {
+			  display: none;
+			}
+			.total-results {
+				padding: 30px 0;
+			}
+			.ui-list{
+				width: 96%;
+				margin: 0 auto;
+			}
+			
+			.ui-list-subTitle,.ui-list-content{
+				font-size: 1.3em;
+				padding: 6px 6px 10px 6px;
+				border: none;
+			}
+			.ui-list li{
+				width: 100%;
+				border-bottom: 1px solid #959595;
+			}
+			.ui-list li:nth-child(even) {
+				border: none;
+			}
+			.ui-list li:last-child{
+				border-bottom: none;
+			}
+			.ui-list li div{
+				padding: 10px 0;
+				width: 25%;
+				text-align: center;
+			}
+			.ui-list .ui-list-subTitle{				
+				color: #000;
+			}
+			.ui-list .ui-list-content{
+				font-size: 1.25em;
+			}
+			.ui-list .ui-list-content:first-child{
+				text-align: center;
+			}
+			.ui-data-result{
+				font-size: 30px;
+			}
+			.data-title{
+				border-bottom: none;
+				padding: 10px 20%;
+			}
+			.select-box{
+				background: none;
+				width: 100%;
+				border: 1px solid rgba(255,255,255,.5);
+			}
+			.select-box em{
+				background: url(images/icon-search-white.png) no-repeat center center;
+				background-size: 1.3em;
+			}
+			.select-box input{
+				width: 84%;
+			}
+			input[type=text]{
+				background: none;
+			}
+			.select-contents{
+				width: 50%;
+				left: 25%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<!--<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>-->
+			<div class="total-results">
+				<div class="ui-data-result" v-text="companyName"></div>
+				<div class="select-wrapper">
+		       		<h2 class="data-title flex flex-pack-between flex-align-center">
+		            	<label for="search-data" class="flex flex-align-center select-box" @click="showList()">
+		            		<input type="text" v-model="typeName" id="search-data" v-on:keyup="searchData($event)"/>
+		            		<em class="icon-search"></em>
+		            	</label>       		       		
+		        	</h2>
+		       		<div class="triangle_border_up">
+					</div>
+		        	<ul class="select-contents">
+		        		<li @click="chooseType($event)">查全部</li>
+		        		<li v-for="item in selectData" @click="chooseType($event)" v-bind:class="{selected: typeName == item}">{{item}}</li>
+		        	</ul>
+		       </div>
+			</div>
+			
+            <ul class="ui-list" v-cloak>				
+				<li class="flex">
+					<div class="ui-list-subTitle">网点名称</div>
+					<div class="ui-list-subTitle">金额</div>
+					<div class="ui-list-subTitle">警戒金额</div>
+					<div class="ui-list-subTitle">关闭金额</div>
+				</li>
+				<li class="flex" v-for="curData in dataContent">					
+					<div class="ui-list-content" v-text="curData.siteName"></div>
+					<div class="ui-list-content" v-text="curData.balance"></div>
+					<div class="ui-list-content" v-text="curData.alertAmount"></div>
+					<div class="ui-list-content" v-text="curData.closeSystemAmount"></div>
+				</li>
+			</ul>
+			<div class="mask-layer"></div>
+		</div>
+		
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+		<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js?v=20170921"></script>
+		<script type="text/javascript" src="js/customers/chengbaoquyue.js?v=20170921"></script>
+	</body>
+</html>

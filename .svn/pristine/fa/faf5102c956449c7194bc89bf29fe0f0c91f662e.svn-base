@@ -1,0 +1,230 @@
+var app = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '重量段分析',
+		activeIndex: 0,
+		startDate: '',
+		titleDate: '',
+		endDate: sys.todayDate(),
+		totalTickets: 0,	
+		zlfxData:[],
+		dayMonth: '0',
+		tableShow: false,
+		selectData: [],
+		typeName: '',		
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');
+		this.titleDate = this.startDate + '-' + this.endDate;		
+		this.typeName = '';//默认所有数据
+		this.requestData('zhonglianfenxi.query');
+	},
+	methods: {
+		//切换网点客户数据查询
+		tab: function(index){
+			var self = this;
+			this.activeIndex = index;						
+			this.typeName = '';
+			this.requestData('zhonglianfenxi.query');
+		},
+		closeDate: function(){
+			var self = this;
+			$('.mask-layer').fadeOut();
+			$('.picker-box').fadeOut(200);
+			this.startDate = this.$refs.dateinfo.startDate;
+        	this.endDate = this.$refs.dateinfo.endDate;
+        	if(self.endDate === self.startDate){
+				self.titleDate = self.startDate;
+			}else{
+				self.titleDate = self.startDate + '-' + self.endDate;
+			};
+			if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+				sys.toast( '日期有误，请重新输入' );
+				return;
+			};
+			console.log(this.titleDate);
+			$('.select-box').css({
+				zIndex: 999
+			});	
+			this.requestData('zhonglianfenxi.query');
+		},
+		showTable: function(){
+			this.tableShow = !this.tableShow;
+			$('.table-responsive').slideToggle();
+			if(this.tableShow == true){
+				$('.more-data').addClass('up');
+			}else{
+				$('.more-data').removeClass('up');
+			}
+		},
+		//选择下拉框出现
+		showList: function(){
+			$('.mask-layer').fadeIn();
+			$('.select-contents').fadeIn(200);
+			$('.triangle_border_up').fadeIn(200);
+			$('#container-wrapper').addClass('disScroll');
+			$('.mask-layer').click(function(){
+				$(this).fadeOut();
+				$('.select-contents').fadeOut(200);
+				$('.triangle_border_up').fadeOut(200);
+			})
+		},
+		//输入框搜索关键字查询选择下拉框
+		searchData: function(e){
+			var self = this;
+			var u = window.navigator.userAgent;
+			function searchInput(){
+				var temp=[],curData=[];
+				var dataList = self.selectData;
+				if(self.typeName === ''){
+					if(self.activeIndex == 0){
+						self.selectData = self.websiteData;	
+					}else if(self.activeIndex == 1){
+						self.selectData = self.clientData;				
+					};
+				}else{
+					for(var i=0;i<dataList.length;i++){
+						if(dataList[i].indexOf(self.typeName) != -1){
+							curData.push(dataList[i])
+						}
+					};
+					if(curData.length != 0){
+						self.selectData = curData;
+					}else{
+						sys.toast('查无此记录')
+					}
+				};
+			};
+			if(u.indexOf('AppleWebKit' && u.indexOf('Safari') > -1) > -1){
+				if(e.which === 13){
+					searchInput();
+				}
+			}else{
+				searchInput();
+			};
+			$('.icon-search').click(searchInput);
+		},
+		//选择对应网点或客户名称
+		chooseType: function(event){
+			$('.mask-layer').fadeOut();
+			$('.select-contents').fadeOut(200);
+			$('.triangle_border_up').fadeOut(200);
+			$('#container-wrapper').removeClass('disScroll');
+			this.typeName = event.currentTarget.innerHTML;
+			event.currentTarget.className='selected';
+			$(event.currentTarget).siblings().removeClass('selected');
+			this.requestData('zhonglianfenxi.query');
+		},
+		requestData: function(method){
+			var self = this;
+			sys.requestDataNew(method, {
+				startTime : self.startDate,
+				endTime : self.endDate,
+				weightType : self.activeIndex===0 ? '0':'1',
+				siteName: self.activeIndex===0 ? self.typeName : '',
+				customerName: self.activeIndex===1 ? self.typeName : ''				
+			}, function( result ) {				
+				console.log(result);				
+				if(result.data.length == 0 && self.activeIndex == 0){												
+					sys.toast('暂无数据！');
+					return false;
+				};
+				self.readerChartzhongliang(result);				
+			});
+		},
+		readerChartzhongliang: function(res){			
+			var self = this;
+			var _totalNum = 0,				
+				_resultData = res.data;
+			var _showListArr = [],_votes1=0,_votes2=0,_votes3=0,_votes4=0,_votes5=0;
+			if(_resultData.length == 0){
+				_showListArr = [];
+				self.zlfxData = [];
+			};
+			if(_resultData.length!=0){
+				for(var i=0;i<5;i++){
+					if(_resultData[0]['range'+(i+1)]){
+						_showListArr.push({name: _resultData[0]['range'+(i+1)],value: 0 })											
+					}
+				};
+				for ( var i = 0; i < _resultData.length; i++ ) {
+					if(self.activeIndex===1){
+						self.selectData.push(_resultData[i]['customerName']);					
+					}else{
+						self.selectData.push(_resultData[i]['siteName']);
+					};
+					_showListArr.forEach(function(item,index){
+						item.value += _resultData[i]['votes'+ (index+1)]
+					});
+				};				
+				console.log(_showListArr);
+			};
+				
+			if(_showListArr.length!=0){
+				_showListArr.forEach(function(item,index){
+					_totalNum+=item.value;
+				});
+				self.zlfxData = _showListArr;
+			};
+			this.totalTickets = _totalNum;			
+					
+			//饼图
+			var _chartPie = echarts.init( document.getElementById('ui-chart-website') ),
+		        _pieoption = {
+		        	baseOption:{
+			        	noDataLoadingOption : {
+			        		text: '暂无数据',
+	                        effect: 'bubble',
+			        	},
+						tooltip : {
+					        trigger: 'item',
+					        formatter: "{b}<br/>{d}%"
+					    },
+					    color:['#3575bd', '#46c6ff','#38dab9','#ffd077','#f199f2','#f25b4a'],  
+					    series : [
+					        {
+					            name:'重量段分析',
+					            type:'pie',						           
+					          	radius : [30, 80],
+					          	center: ['50%', '55%'],			         
+					            label: {
+					            	normal: {
+					            		show: true,
+					            		position: 'outer',
+					            		formatter: '{c}票'+ '\n'+'{b}'
+					            	}
+					            },
+					            labelLine: {
+					            	normal:{
+					            		show: true,
+					            		length: 6,
+					            		length2: 15
+					            	}
+					            },
+					            data : _showListArr.reverse()
+					        }
+					    ],
+		        	},
+		        	media: [
+		        	    {
+		        	    	query:{        	    	
+			        	    	minWidth: 360       	    	
+			        	    },
+			        	    option:{
+			        	    	series:[{
+			        	    		radius : [35, 95],
+			      	    	       	center: ['50%', '55%'],
+			        	    	}]       	    	            	    	
+			        	    }
+		        	    }
+		        	]
+		        	
+				};
+
+		    _chartPie.setOption( _pieoption );
+		},
+
+	},
+
+});

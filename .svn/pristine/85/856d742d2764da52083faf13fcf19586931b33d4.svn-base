@@ -1,0 +1,190 @@
+var app = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '加盟账单',		
+		startDate: '',
+		endDate: sys.todayDate(),
+		totalTickets: 0,
+		totalYue: 50000,
+		tableShow: false,
+		balanceData: [
+		{date: '2017-07-05',tickets: 30000, trans: 20109, handle: 34566,other: 3546},
+		{date: '2017-07-04',tickets: 30000, trans: 20109, handle: 34566,other: 3546},
+		{date: '2017-07-03',tickets: 30000, trans: 20109, handle: 34566,other: 3546},
+		{date: '2017-07-02',tickets: 30000, trans: 20109, handle: 34566,other: 3546},
+		{date: '2017-07-01',tickets: 30000, trans: 20109, handle: 34566,other: 3546}
+		]
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');		
+		this.requestData('statistics.distribution');	
+		//this.readerChartzhongliang();
+	},
+	methods: {
+		//切换网点客户数据查询		
+		showDate: function(){
+			var self = this;
+			$('.mask-layer').fadeIn();
+			$('.picker-box').fadeIn(200);
+			$('.select-box').css({
+				zIndex: 1
+			});		
+		},
+		closeDate: function(){
+			var self = this;
+			$('.mask-layer').fadeOut();
+			$('.picker-box').fadeOut(200);	
+			$('.select-box').css({
+				zIndex: 999
+			});
+			if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+				sys.toast( '日期有误，请重新输入' );
+				return;
+			};	
+			self.requestData('statistics.distribution');		
+		},
+		payShow: function(){
+			$('.test-pay').show();
+			$('.mask-layer').show();
+			$('.test-pay').find('img').click(function(){
+				$('.test-pay').hide();
+				$('.mask-layer').hide();
+			})
+		},
+		startQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.startDate = result.text.replace(/-/g,'/');	
+				_picker.dispose();
+			} );			
+		},
+		endQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.endDate = result.text.replace(/-/g,'/');						
+				_picker.dispose();
+			} );
+			
+		},
+		showTable: function(){
+			this.tableShow = !this.tableShow;
+			$('.table-responsive').slideToggle();
+			if(this.tableShow == true){
+				$('.more-data').addClass('up');
+			}else{
+				$('.more-data').removeClass('up');
+			}
+		},
+		requestData: function(method){
+			var self = this;
+			sys.requestDataNew(method, {
+				startTime : self.dayMonth != '1' ?  self.startDate : self.startDate + '/01',
+				endTime : self.dayMonth != '1' ?  self.endDate : sys.endDayOfMonth(self.endDate),
+				dayMonth : self.dayMonth
+			}, function( result ) {
+				if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+					sys.toast( '日期有误，请重新输入' );
+					return;
+				}					
+				if(result.data.length == 0 && self.activeIndex == 0){												
+					sys.showMsg('暂无数据！');						
+				};
+				var obj=[{name: '其他',value: 15000},{name: '操作费',value: 8000},
+				{name: '中转费',value: 7000},{name: '扫描费',value: 6000},{name: '跑车费',value: 5000},
+				{name: '建包费',value: 4000}];
+				self.readerChartzhongliang(obj);				
+			});
+		},
+		readerChartzhongliang: function(res){			
+			var self = this;
+			var _showListArr = [],
+				_totalNum = 0,				
+				_resultData = res;
+			if(_resultData.length == 0){
+				_showListArr = [];
+			};
+			for ( var i = 0; i < _resultData.length; i++ ) {
+				_totalNum += parseFloat( _resultData[i].value );
+				_showListArr.push(_resultData[i]);
+			}
+			this.totalTickets = _totalNum;
+						
+			console.log(_showListArr)
+			//饼图
+			var _chartPie = echarts.init( document.getElementById('ui-chart-website') ),
+		        _pieoption = {
+		        	baseOption:{
+			        		noDataLoadingOption : {
+			        		text: '暂无数据',
+	                        effect: 'bubble',
+			        	},
+						tooltip : {
+					        trigger: 'item',
+					        formatter: "{b}<br/>{d}%"
+					    },
+					    color:['#3575bd', '#46c6ff','#38dab9','#ffd077','#f199f2','#f25b4a'],  
+					    series : [
+					        {
+					            name:'货量分布',
+					            type:'pie',						           
+					          	radius : [30, 82],
+					          	center: ['50%', '53%'],			         
+					            label: {
+					            	normal: {
+					            		show: true,
+					            		position: 'outer',
+					            		formatter: '{c}元'+ '\n'+'{b}'
+					            	}
+					            },
+					            labelLine: {
+					            	normal:{
+					            		show: true,
+					            		length: 6,
+					            		length2: 15
+					            	}
+					            },
+					            data : _showListArr.reverse()
+					        }
+					    ],
+		        	},
+		        	media: [
+		        	    {
+		        	    	query:{        	    	
+			        	    	minWidth: 360       	    	
+			        	    },
+			        	    option:{
+			        	    	series:[{
+			        	    		radius : [35, 95],
+			      	    	       	center: ['50%', '55%'],
+			        	    	}]       	    	            	    	
+			        	    }
+		        	    }
+		        	]
+		        	
+				};
+
+		    _chartPie.setOption( _pieoption );
+		},
+
+	},
+
+});

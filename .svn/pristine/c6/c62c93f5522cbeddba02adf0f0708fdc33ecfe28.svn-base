@@ -1,0 +1,15 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '查询结果',
+		queryDays: 3,
+		pickerName: 'XXX',
+		customerName: '中通快递',
+		weight: '2kg',
+		queryCost: '￥20.00',
+		targetAddress: '广州',
+		pickCustomer: '刚发给',
+		pickClerk: '黄飞鸿',
+		pickSite: '深圳南山'
+	}
+})

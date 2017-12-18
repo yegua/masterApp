@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="screen-orientation" content="portrait"/>
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="format-detection" content="telephone=no">
+	    <meta name="full-screen" content="yes">
+	    <meta name="x5-fullscreen" content="true">
+		<title>加盟账单</title>
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" href="css/public.css">
+		<link rel="stylesheet" type="text/css" href="fonts/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="css/main.css"/>
+		<style>
+			[v-cloak] {
+			  display: none;
+			}
+			/*.picker-box {				
+				top: 140px;
+			}
+			.mui-dtpicker { 				 
+				top: 142px;							
+			}		*/
+		</style>
+	</head>
+	<body>
+		<div id="container-wrapper">
+			<header>
+				<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+			</header>
+			<ul class="balance-lists flex flex-pack-between flex-align-center">
+	            <li class="flex flex-align-center flex-pack-center">
+	            	<span class="yue-bg"></span>
+	            	<em>余额：</em><em v-cloak style="color: #f25b4a;">{{totalYue}}元</em>
+	            </li>
+	            <li class="flex flex-align-center flex-pack-center" @click="payShow()">
+	            	<span class="chongzhi-bg"></span>
+	            	<em>在线充值</em>
+	            </li>
+	        </ul>
+			<div class="date-choose flex flex-pack-between">
+                <div style="visibility: hidden;">出货日期</div>             
+                <div class="date-icon" @click="deductDate()">扣款日期</div>
+                <div class="picker-box">
+	            	<em></em>
+	            	<p class="date-info">
+	            		<input placeholder="开始时间" :class="dateFlag==='start'?'picker-disable':''" id="start" @click="dateFlag==='start'?'':startQueryFn()" v-model="startDate" readonly />           		
+	            		至
+	            		<input placeholder="结束时间" :class="dateFlag==='end'?'picker-disable':''" id="end"  @click="dateFlag==='end'?'':endQueryFn()" v-model="endDate" readonly />           		
+	            	</p>
+	            	<p class="date-confirm">
+	            		<button class="btn-confirm" @click="closeDate()">确认</button>
+	            	</p>		
+	            </div>
+           </div>
+            <div class="bill-contents">
+            	<h2 class="data-title flex flex-pack-between">
+	                <span>7月1号</span>
+	                <span>已完成</span>
+	            </h2>
+	            <h2 class="data-title flex flex-pack-between bill-title">
+	                <span>总票数：<em v-text="totalTickets"></em>票</span>
+	                <span>总重量：<em v-text="totalWeight"></em>kg</span>
+	            </h2>
+	            <ul>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-trans.png"/>
+	            		<div class="left-align">中转费</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-express.png"/>
+	            		<div class="left-align">操作费</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-chong.png"/>
+	            		<div class="left-align">充值</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-chz.png"/>
+	            		<div class="left-align">冲账</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-other.png"/>
+	            		<div class="left-align">其他</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-total.png"/>
+	            		<div class="left-align">合计</div>	            		
+	            		<div class="right-align" style="width: 60%;">
+	            			<div>-4543.66</div>	            			
+	            		</div>
+	            	</li>
+	            </ul>
+	            <p class="margin-space"></p>
+            </div>
+            <div class="bill-contents">
+            	<h2 class="data-title flex flex-pack-between">
+	                <span>7月2号</span>
+	               <span>已完成</span>
+	            </h2>
+	            <h2 class="data-title flex flex-pack-between bill-title">
+	                <span>总票数：{{totalTickets}}票</span>
+	                <span>总重量：{{totalWeight}}kg</span>
+	            </h2>
+	            <ul>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-trans.png"/>
+	            		<div class="left-align">中转费</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-express.png"/>
+	            		<div class="left-align">操作费</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-chong.png"/>
+	            		<div class="left-align">充值</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-chz.png"/>
+	            		<div class="left-align">冲账</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-other.png"/>
+	            		<div class="left-align">其他</div>
+	            		<div class="center-align">
+	            			<div>扣除</div>
+	            			<div>调整</div>		            			
+	            		</div>
+	            		<div class="right-align">
+	            			<div>-4543.66</div>
+	            			<div>0</div>		            			
+	            		</div>
+	            	</li>
+	            	<li class="flex flex-align-center">
+	            		<img src="images/icon-total.png"/>
+	            		<div class="left-align">合计</div>	            		
+	            		<div class="right-align" style="width: 60%;">
+	            			<div>-4543.66</div>	            					            			
+	            		</div>
+	            	</li>
+	            </ul>
+	            <p class="margin-space"></p>
+            </div>
+            <div class="test-pay">
+            	<img src="images/icon-yue.png" />
+            </div>
+            <div class="mask-layer"></div>
+		</div>
+		
+		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+		<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+		<script type="text/javascript" src="js/libs/vue.min.js"></script>
+		<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+		<script type="text/javascript" src="js/customers/joinBalance.js"></script>
+	</body>
+</html>

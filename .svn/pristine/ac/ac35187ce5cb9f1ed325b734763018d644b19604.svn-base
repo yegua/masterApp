@@ -1,0 +1,50 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '网点营业额',
+		startDate: '',
+		endDate: sys.todayDate(),
+		dataProfit: 999.99,
+		dataContent: []
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');
+	},
+	method: {
+		startQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.startDate = result.text.replace(/-/g,'/');	
+				_picker.dispose();
+			} );
+			
+		},
+		endQueryFn: function(){
+			var self = this;
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.endDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.endDate = result.text.replace(/-/g,'/');						
+				_picker.dispose();
+			} );
+			
+		},
+	}
+})

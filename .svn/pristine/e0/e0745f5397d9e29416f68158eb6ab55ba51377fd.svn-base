@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+	<title>重量段分析</title>
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">	
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	
+		<style type="text/css">
+			html,body{
+				background: #fff;
+			}
+			[v-cloak] {
+			  display: none;
+			}
+			.tab-lists{
+				padding-bottom: 0;
+			}
+		</style>
+</head>
+<body>
+	<div id="container-wrapper">
+		<!--<header>
+			<a href="javascript:history.back(-1)" class="icon-back"></a><span v-text="title"></span>
+		</header>-->
+		<ul class="tab-lists flex flex-pack-between flex-align-center">
+            <li class="flex flex-align-center flex-pack-center" :class="{active: activeIndex === 0}" @click="tab(0)">
+            	<span class="website-bg" :class="{websiteSelected: activeIndex === 0}"></span>
+            	<em>网点</em>
+            </li>
+            <li class="flex flex-align-center flex-pack-center" :class="{active: activeIndex === 1}" @click="tab(1)">
+            	<span class="client-bg" :class="{clientSelected: activeIndex === 1}"></span>
+            	<em>客户</em>
+            </li>
+      </ul>
+            <picker-box v-on:close="closeDate()" v-bind:titledate="titleDate" ref="dateinfo"></picker-box>
+           	<div class="select-wrapper">
+           		<h2 class="data-title flex flex-pack-between flex-align-center">
+	            	<label for="search-data" class="flex flex-align-center select-box" @click="showList()">
+	            		<input type="text" v-model="typeName" id="search-data" v-on:keyup="searchData($event)"/>
+	            		<em class="icon-search"></em>
+	            	</label>       		
+	        		<span class="total-tickets">总票数：<em v-text="totalTickets"></em></span>
+	        	</h2>
+           		<div class="triangle_border_up">
+				</div>
+	        	<ul class="select-contents">
+	        		<li v-for="item in selectData" @click="chooseType($event)" v-bind:class="{selected: typeName == item}">{{item}}</li>
+	        	</ul>
+           	</div>                  	
+        	<div id="ui-chart-website"></div>
+        	<p class="more-data" @click="showTable()"></p>
+        	<div id="website-table" class="table-responsive">
+        		<table class="table">
+        			<tr>
+	        			<th class="alignLeft">重量</th>
+	        			<th class="alignCenter">票数</th>
+	        			<th class="alignRight">占比</th>
+        			</tr>
+        			<tr v-for="item in zlfxData">
+        				<td class="alignLeft" style="width: 35%;" v-cloak>{{item.name}}</td>
+        				<td class="alignCenter"  style="width: 45%;" v-cloak>{{item.value}}</td>
+        				<td class="alignRight"  style="width: 20%;" v-cloak>{{(parseFloat(item.value)/totalTickets*100).toFixed(2)}}%</td>
+        			</tr>
+        		</table>
+        	</div>
+        	<div class="mask-layer"></div>
+	</div>
+	
+	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+	<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+	<script type="text/javascript" src="js/libs/swiper.min.js"></script>
+	<script type="text/javascript" src="js/libs/echarts.common.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+	<script type="text/javascript" src="js/customers/template.js"></script>
+	<script type="text/javascript" src="js/customers/zhongliangfx.js"></script>
+</body>
+</html>

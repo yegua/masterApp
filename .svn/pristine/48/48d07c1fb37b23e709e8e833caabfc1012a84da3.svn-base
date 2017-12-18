@@ -1,0 +1,123 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {		
+		startDate: '',
+		endDate: sys.todayDate(),
+		startFlag: '0',
+		endFlag: '0',
+		titleDate: '',
+		sendName: '敏思达',
+		waybillUsed: 0,
+		waybillUnused: 0,
+		backBillUsed: 0,
+		backBillUnused: 0,
+		subBillUsed: 0,
+		subBillUnused: 0,
+		usedNum: 0,
+		unusedNum: 0
+		
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');
+		this.titleDate = this.startDate + '-' + this.endDate;
+		this.requestData();
+	},
+	methods: {
+		showDate: function(){
+			var self = this;
+			$('.mask-layer').fadeIn();
+			$('.picker-box').fadeIn(200);		
+		},
+		closeDate: function(){
+			var self = this;
+			$('.mask-layer').fadeOut();
+			$('.picker-box').fadeOut(200);
+			if( !sys.compareWithDate( self.endDate, self.startDate ) ) {
+				sys.toast( '日期有误，请重新输入' );
+				return;
+			};
+			if(self.endDate === self.startDate){
+				self.titleDate = self.startDate;
+			}else{
+				self.titleDate = self.startDate + '-' + self.endDate;
+			};
+		},
+		startQueryFn: function(){
+			var self = this;
+			this.startFlag = 'start';
+			this.endFlag = 'end';
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.startDate = result.text.replace(/-/g,'/');	
+				self.startFlag = '0';
+				self.endFlag = '0';
+//				_picker.dispose();
+			} );
+			mui(".mui-btn")[0].addEventListener('tap',function(){
+			    self.startFlag = '0';
+				self.endFlag = '0';
+			});
+		},
+		endQueryFn: function(){
+			var self = this;
+			this.startFlag = 'start';
+			this.endFlag = 'end';
+			var _options = { 
+				'type' : 'date',
+				'beginYear' : 2000,
+				'endYear' : new Date().getFullYear() 
+			},
+			_picker = null;
+			_options.type = 'date';
+			_options.value = this.startDate.replace(/\//g,'-');			
+			_picker = new mui.DtPicker( _options );			
+			_picker.show( function( result ) {							
+				self.endDate = result.text.replace(/-/g,'/');	
+				self.startFlag = '0';
+				self.endFlag = '0';
+//				_picker.dispose();
+			} );
+			mui(".mui-btn")[0].addEventListener('tap',function(){
+			    self.startFlag = '0';
+				self.endFlag = '0';
+			});
+		},
+		requestData: function(){
+			var dataList=[{sendName: '敏思达',waybillUsed: 898,waybillUnused: 4546,backBillUsed: 456,backBillUnused: 546,subBillUsed: 99,subBillUnused:96}];
+			this.renderChart(dataList);
+		},
+		renderChart:function( result ) {
+			var self = this;
+    		var _resultData = result[0],
+    			_wayUsedNum = parseFloat( _resultData['waybillUsed'] ),
+				_wayUnusedNum = parseFloat( _resultData['waybillUnused'] ),
+				_backUsedNum = parseFloat( _resultData['backBillUsed'] ),
+				_backUnusedNum = parseFloat( _resultData['backBillUnused'] ),
+				_subUsedNum = parseFloat( _resultData['subBillUsed'] ),
+				_subUnusedNum = parseFloat( _resultData['subBillUnused'] ),	
+				_sendName=_resultData['sendName'],
+				//根据数据计算
+				_totalUsedNum = _wayUsedNum + _backUsedNum + _subUsedNum,
+				_totalUnusedNum = _wayUnusedNum + _backUnusedNum + _subUnusedNum;										
+				self.sendName = _sendName;
+				self.waybillUsed = _wayUsedNum;
+				self.waybillUnused = _wayUnusedNum;
+				self.backBillUsed = _backUsedNum;
+				self.backBillUnused = _backUnusedNum;
+				self.subBillUsed = _subUsedNum;
+				self.subBillUnused = _subUnusedNum;
+				self.usedNum = _totalUsedNum;					
+				self.unusedNum = _totalUnusedNum;
+				console.log(_wayUsedNum,_wayUnusedNum,_sendName);		
+    	}
+	}
+})

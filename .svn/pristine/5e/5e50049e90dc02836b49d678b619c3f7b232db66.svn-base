@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+	<title>个人运单使用</title>
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/public.css">
+	<link rel="stylesheet" type="text/css" href="fonts/iconfont.css"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<style>	
+		.table-responsive{
+			display: block;
+			padding-top: 0;
+		}	
+		.table-responsive .table{
+			width: 100%;
+		}	
+		.table-responsive .table tr:nth-child(odd),.table-responsive .table tr:nth-child(even){
+			background: none;
+		}
+		.table-responsive .table tr th, .table-responsive .table tr td {
+			border-top: none;
+			padding: 15px;
+			border-bottom: 1px solid #CCC9C9;
+		}
+		.table-responsive .table tr th:nth-child(3), .table-responsive .table tr td:nth-child(3){
+			border-right: none;
+		}
+		.table-responsive .table tr td{
+			color: #181818;
+		}
+		.total-results{
+			padding: 30px 0;
+		}
+		.ui-data-result{
+			font-size: 32px;
+		}
+		.ui-data-subTitle{
+			padding: 10px 0;
+		}
+	</style>
+</head>
+<body>	
+	<div id="container-wrapper">			
+		<div class="total-results">
+			<div class="ui-data-result" v-text="sendName"></div>
+		 	<div class="ui-data-subTitle">
+		 		<span v-text="titleDate"></span>
+		 	</div>
+		</div>
+		<div class="date-choose flex flex-pack-between">
+            <div>
+                <span v-text="titleDate"></span>
+            </div>                
+            <div class="date-icon" id="date-show" @click="showDate()">日期</div> 
+            <div class="picker-box">
+            	<em></em>
+            	<p class="date-info">
+            		<input type="text" name="startTime" placeholder="开始时间" id="start" @click="startFlag==='start'?'':startQueryFn()" v-model="startDate" readonly onfocus="this.blur();"/>           		
+	            		至
+	            	<input type="text" name="endTime" placeholder="结束时间" id="end"  @click="endFlag==='end'?'':endQueryFn()" v-model="endDate" readonly onfocus="this.blur();"/>           		         		
+            	</p>
+            	<p class="date-confirm">
+            		<button class="btn-confirm" @click="closeDate()">确认</button>
+            	</p>		
+            </div>
+       </div>         
+       	<div class="table-responsive">
+			<table class="table">
+				<tr><th>品名</th><th>已使用</th><th>未使用</th></tr>
+				<tr><td>运单</td><td v-text="waybillUsed"></td><td v-text="waybillUnused"></td></tr>
+				<tr><td>子单</td><td v-text="subBillUsed"></td><td v-text="subBillUnused"></td></tr>
+				<tr><td>回单</td><td v-text="backBillUsed"></td><td v-text="backBillUnused"></td></tr>
+				<tr><th class="first"><span>合计</span></th>
+				<th><span v-text="usedNum"></span>量</th>
+				<th><span v-text="unusedNum"></span>量</th></tr>
+			</table>
+		</div>
+		<div class="mask-layer"></div>
+	</div>
+   	<script type="text/javascript" src="js/libs/jquery.min.js"></script>
+	<script type="text/javascript" src="js/libs/mui.min.js"></script>	
+	<script type="text/javascript" src="js/libs/mui.picker.min.js"></script>	
+	<script type="text/javascript" src="js/libs/vue.min.js"></script>
+	<script type="text/javascript" src="js/libs/sysCommon.js"></script>
+	<script type="text/javascript" src="js/customers/yundansy.js"></script>
+</body>
+</html>

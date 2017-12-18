@@ -1,0 +1,337 @@
+$(function(){
+	var outSwiper = new Swiper('.swiper-container', {
+		initialSlide :1,
+		nextButton: '.swiper-button-next',
+    	prevButton: '.swiper-button-prev',
+	    observer:true,//修改swiper自己或子元素时，自动初始化swiper
+	    observeParents:true,//修改swiper的父元素时，自动初始化swiper
+	    onInit: function(swiper){
+	      //Swiper初始化了
+	      console.log(swiper)
+	      app.endDate = sys.todayDate();
+	      app.startDate = sys.dateDiffDay(app.endDate,4,'before');
+	    },
+	    onSlideNextEnd: function(swiper){
+	    	if(app.dayMonth=='0'){
+	      		app.startDate = sys.dateDiffDay(app.endDate,1,'after');
+	      		app.endDate = sys.dateDiffDay(app.endDate,5,'after');	     
+	     	}else if(app.dayMonth=='1'){
+	     		app.startDate = sys.dateDiffMonth(app.endDate,1,'after');
+	      		app.endDate = sys.dateDiffMonth(app.endDate,5,'after');	
+	     	}
+	    	
+	    },
+	    onSlidePrevEnd: function(swiper){
+	    	if(app.dayMonth=='0'){
+	    		app.endDate = sys.dateDiffDay(app.startDate,1,'before');
+	      		app.startDate = sys.dateDiffDay(app.startDate,5,'before');
+	    	}else if(app.dayMonth=='1'){
+	    		app.endDate = sys.dateDiffMonth(app.startDate,1,'before');
+	      		app.startDate = sys.dateDiffMonth(app.startDate,5,'before');
+	    	}
+	    	
+	    }
+	});
+});
+function pickedFunc(){
+	app.requestData('statistics.distribution');
+	if(app.dayMonth=='0'){
+		app.endDate = $('#startTime').val().replace(/-/g,'/');
+		app.startDate = sys.dateDiffDay($('#startTime').val(),4,'before');
+		app.requestData('statistics.enteringLeaving');
+	}else if(app.dayMonth=='1'){
+		app.endDate = $('#startTime').val().replace(/-/g,'/').substring(0,7);
+		app.startDate = sys.dateDiffMonth($('#startTime').val(),4,'before');
+		app.requestData();
+		app.requestData('statistics.enteringLeaving');
+	}
+};
+var _dateFmt = 'yyyy年M月d日';
+//创建轮播组件
+Vue.component('swiper-component',{
+	template: '<div class="swiper-container">\
+        <div class="swiper-wrapper">\
+        	<div class="swiper-slide">\
+        		<div id="ui-container-before" class="chart-container">\
+        		</div>\
+        	</div>\
+            <div class="swiper-slide">\
+            <div id="ui-container-now" class="chart-container">\
+            </div>\
+            </div>\
+            <div class="swiper-slide">\
+            <div id="ui-container-after" class="chart-container">\
+            </div>\
+            </div>\
+        </div>\
+        <div class="swiper-button-prev"></div>\
+        <div class="swiper-button-next"></div>\
+    </div>\
+    '
+});
+
+var app = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '货量统计',
+		activeIndex: 0,
+		startDate: '',
+		endDate: sys.todayDate(),
+		nowDate: sys.todayDate(),
+		thirdDate: '',
+		outerDatas:[],
+		innerDatas:[],
+		totalTickets: 0,	
+		fenbuData:[],
+		paijianData: [
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-19'},
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-18'},
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-17'},
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-16'},
+			{datatotal1:13000,data1: 1150,data2: 1500,data1ratio:13.31,datatotal2:1730,data2ratio:97.74,_date:'7-15'}			
+		],		
+		data1total: 0,
+		data2total: 0,
+		datas1: 0,
+		datas2: 0,
+		datastotal: 0,
+		dayMonth: '0',
+		tableShow: false
+	},
+	created: function() {
+		var self = this;
+		this.startDate = sys.dateDiffDay(this.endDate,4,'before');
+		this.thirdDate = sys.dateDiffDay(this.nowDate,2,'before');
+		var dataList = this.paijianData;
+		for(var i=0;i<dataList.length;i++){
+			self.data1total += dataList[i].datatotal1;
+			self.datas1 += dataList[i].data1;
+			self.datas2 += dataList[i].data2;
+			self.data2total += dataList[i].datatotal2;
+			self.datastotal += dataList[i].datatotal1 + dataList[i].datatotal2;
+		};
+		
+		//this.requestData('statistics.enteringLeaving');
+		//this.requestDataNow();
+		//this.requestData('statistics.distribution');
+	},
+	methods: {
+		tab: function(index){
+			this.activeIndex = index;
+			this.requestData('statistics.enteringLeaving');
+		},
+		changeDate: function(){
+			var self = this;
+			if(this.dayMonth=='0'){
+				self.dayMonth='1';
+				self.endDate = self.endDate.substring(0,7);
+				self.startDate = sys.dateDiffMonth(self.endDate,4,'before')
+				_dateFmt = 'yyyy年MM月';
+			}else if(this.dayMonth=='1'){
+				self.dayMonth='0';
+				self.startDate = self.endDate + '/01';
+				self.endDate = sys.dateDiffDay(self.startDate,4,'after')
+				_dateFmt = 'yyyy年M月d日';
+			};
+			this.requestData('statistics.enteringLeaving');
+			this.requestData('statistics.distribution');
+		},
+		showTable: function(){
+			this.tableShow = !this.tableShow;
+			$('.table-responsive').slideToggle();
+			if(this.tableShow == true){
+				$('.more-data').addClass('up');
+			}else{
+				$('.more-data').removeClass('up');
+			}
+		},
+		requestDataNow: function(){
+			var self = this;
+			sys.requestDataNew('statistics.enteringLeaving', {
+				startTime : self.thirdDate,
+				endTime : 	self.nowDate,
+				dayMonth : '0'
+			}, function( result ) {
+				result.data.forEach(function(item,index){
+					self.innerDatas.push(item.purchase)
+					self.outerDatas.push(item.shipments)
+				})
+			} );
+		},
+		requestData: function(method){
+			var self = this;
+			sys.requestDataNew(method, {
+				startTime : self.dayMonth != '1' ?  self.startDate : self.startDate + '/01',
+				endTime : self.dayMonth != '1' ?  self.endDate : sys.endDayOfMonth(self.endDate),
+				dayMonth : self.dayMonth
+			}, function( result ) {
+				console.log(result.data);
+				if(method=='statistics.enteringLeaving'){
+					self.readerChartouter('ui-container-now',result);
+				}else if(method == 'statistics.distribution'){
+					self.readerChartfenbu(result);
+				}
+			} );
+		},
+		readerChartouter: function(el,res){
+			var self = this;
+			var datalist = res.data;
+			var outerData=[],innerData=[],_date=[];
+			datalist.forEach(function(item,index){
+				innerData.push(item.purchase);
+				outerData.push(item.shipments);
+				_date.push(item.date.slice( 5 ))
+			});
+			if(datalist.length == 0){
+				outerData=[];
+				innerData=[];
+			};
+			//出港数据
+			var _chartObj = echarts.init( document.getElementById(el) );				
+			var _option = {
+				noDataLoadingOption : {
+            		text : '暂无数据,请到系统上维护',
+            		effect : 'bar'
+            	},
+			    title: {
+			        text: ''
+			    },
+			    tooltip: {
+			        trigger: 'axis',			    
+			        formatter: '{b}/{c}件'
+			    },
+			    grid: {
+			        left: '-2%',
+			        right: '8%',
+			        bottom: '3%',
+			        containLabel: true
+			    },
+			    toolbox: {
+			        show: false
+			    },
+			    xAxis: {
+			        type: 'category',
+			        boundaryGap: false,
+			        data: _date
+			    },
+			    yAxis: {
+			    	type: 'value',
+			    	show: false,
+			    	//min: 'dataMin',
+			    	//max: 'dataMax',
+			    	//interval: 500
+			    },
+			    series: [
+			        {
+			            name:'货量统计',
+			            type:'line',
+			            stack: '总量',
+			            data: self.activeIndex==0 ? outerData :innerData,
+			            itemStyle : { 
+			            	normal: {
+			            		label : {
+			            			show: true,
+			            		},
+			            		color: '#666',
+			            		borderColor: self.activeIndex==0 ? '#ff774b' : '#3575bd',
+			            		borderWidth: 4,
+			            		borderType: 'solid'
+			            	}
+			       		},
+			       		lineStyle: {
+			       			normal: {
+			       				color: self.activeIndex==0 ? '#ff774b' : '#3575bd'
+			       			}
+			       		}
+			        }
+			    ]
+			};
+			_chartObj.setOption( _option ); 
+		},
+		readerChartfenbu: function(res){			
+			var self = this;
+			var _showListArr = [],
+				_totalNum = 0,
+				_otherNum = 0,
+				_otherData = {},
+				_perLabel = '',
+				_tempLabel = '',
+				_otherAreaDataArr = [],
+				_resultData = res.data;
+			if(_resultData.length == 0){
+				_showListArr = [];
+			};
+			for ( var i = 0; i < _resultData.length; i++ ) {
+				_totalNum += parseFloat( _resultData[i].value );
+			}
+			this.totalTickets = _totalNum;
+			var reg=/^[\u4e00-\u9fa5]{0,}$/;
+			for ( var j = 0; j < _resultData.length; j++ ) {
+				_tempLabel =  ( parseFloat( _resultData[j].value ) / _totalNum * 100 ).toFixed( 2 ) + '%';
+				if ( j < 5 ) {
+					_resultData[j].name = _resultData[j].name;
+					_showListArr.push( _resultData[j] );
+				} else {
+					_otherNum += parseFloat( _resultData[j].value );
+					_otherAreaDataArr.push( _resultData[j] );
+				}
+				
+				if ( j == _resultData.length - 1 ) {
+					_otherData = {
+						name : '其他',
+						value : _otherNum
+					};					
+					_showListArr.push( _otherData );
+				}
+			};
+			$.each(_showListArr,function(_index,_item){
+				if(!reg.test(_item.name)){
+					_item.name="偏远地区";
+				}
+			});
+			this.fenbuData = _showListArr;
+			//饼图
+			var _chartPie = echarts.init( document.getElementById('ui-chart-pie') ),
+		        _pieoption = {	         		
+		        	noDataLoadingOption : {
+		        		text: '暂无数据',
+                        effect: 'bubble',
+		        	},
+					tooltip : {
+				        trigger: 'item',
+				        formatter: "{b}<br/>{d}%"
+				    },
+				    color:['#3575bd', '#46c6ff','#38dab9','#ffd077','#f199f2','#f25b4a'],  
+				    series : [
+				        {
+				            name:'货量分布',
+				            type:'pie',				          				
+				            startAngle: 90,
+				          	radius : [30, 90],
+				          	center: ['50%', '53%'],			         
+				            label: {
+				            	normal: {
+				            		show: true,
+				            		position: 'outer',
+				            		formatter: '{c}票'+ '\n'+'{b}'
+				            	}
+				            },
+				            labelLine: {
+				            	normal:{
+				            		show: true,
+				            		length: 5,
+				            		length2: 15
+				            	}
+				            },
+				            data : _showListArr
+				        }
+				    ]
+				};
+
+		    _chartPie.setOption( _pieoption );
+		},
+
+	},
+
+});
+

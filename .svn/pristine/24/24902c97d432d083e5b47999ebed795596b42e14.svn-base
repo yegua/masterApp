@@ -1,0 +1,34 @@
+var queryVue = new Vue({
+	el: '#container-wrapper',
+	data: {
+		title: '查询结果',
+		queryDays: 3,
+		pickerName: 'XXX',
+		customerName: '中通快递',
+		weight: '2kg',
+		queryCost: '￥20.00',
+		targetAddress: '广州',
+		pickCustomer: '刚发给',
+		pickClerk: '黄飞鸿',
+		pickSite: '深圳南山',
+		queryCode: '',
+		resultList: []
+	},
+	created: function(){
+		this.loadData();
+	},
+	methods: {
+		loadData: function() {		
+			var _listData = localStorage.getItem( 'dec_queryDetailPage_listData' ),
+				_curData = JSON.parse( _listData ),
+				_curTrack = _curData.data.track,
+				_newSort = [];									
+			this.queryCode = _curTrack.billcode;
+			this.resultList = _curTrack.details;	
+			var len = _curTrack.details.length;
+			//var days = new Date(this.resultList[len-1].scanTime) - new Date(this.resultList[0].scanTime);
+			console.log(this.resultList);
+			//this.queryDays = Math.ceil(days/(3600*1000*24));
+		}
+	}
+})
